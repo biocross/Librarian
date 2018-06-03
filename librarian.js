@@ -1,9 +1,13 @@
 const program = require('commander');
 const ngrok = require('ngrok');
 const chalk = require('chalk');
-const log = console.log;
+const storage = require('node-persist');
+const os = require('os');
 const { spawn } = require('child_process');
 const { beginSetup, isSetup } = require('./setup.js');
+
+const log = console.log;
+const jekyllCommand = 'jekyll serve --livereload';
 
 program
   .version('1.0.0')
@@ -14,7 +18,7 @@ program
   .alias('s')
   .description('Setup Librarian to Run on your machine')
   .action(() => {
-    printWithDivider('Welcome to Librarian!');
+    printHeader('Welcome to Librarian!');
     beginSetup();
   });
 
@@ -26,18 +30,18 @@ program
     
     printHeader('Starting Librarian...');
 
-    const child = spawn('jekyll serve', {
+    let home = os.homedir();
+
+    const jekyll = spawn(jekyllCommand, {
       shell: true,
-      cwd: '/Users/sids/Desktop/BuildKeeper/'
+      cwd: `${home}/Desktop/BuildKeeper/`
     });
 
-    child.stdout.on('data', (data) => {
+    jekyll.stdout.on('data', (data) => {
       if (data.indexOf('Server address:') > -1) {
-        console.log(`Jekyll${data}`);
+        log('Jekyll Server Started');
       }
     });
-
-    // ps aux |grep jekyll |awk '{print $2}' | xargs kill -9
 
     ngrok.connect({
       addr: 4000,
@@ -72,5 +76,9 @@ const fatalError = (message) => {
   log(chalk.black.bgRed.bold('🚨🚨🚨 Error: ' + message + ' 🚨🚨🚨'));
   process.exit(1);
 };
+
+function getUserHome() {
+  return process.env.HOME || process.env.USERPROFILE;
+}
 
 program.parse(process.argv);
