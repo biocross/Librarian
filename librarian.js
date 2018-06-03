@@ -1,5 +1,7 @@
 const program = require('commander');
 const ngrok = require('ngrok');
+const chalk = require('chalk');
+const log = console.log;
 const { spawn } = require('child_process');
 const { beginSetup, isSetup } = require('./setup.js');
 
@@ -21,8 +23,8 @@ program
   .alias('st')
   .description('Start the Librarian Server')
   .action(() => {
-    printWithDivider('Starting Librarian...');
-
+    
+    printHeader('Starting Librarian...');
 
     const child = spawn('jekyll serve', {
       shell: true,
@@ -46,8 +48,8 @@ program
         fatalError('Failed to start the ngrok tunnel.')
       }
 
-      console.log("Server is up at: ")
-      console.info(url);
+      log("Server is up at: ")
+      log(url);
     });
   });
 
@@ -60,16 +62,15 @@ program
     console.log("Starting Build Submission!")
   });
 
-const printWithDivider = (message) => {
-  console.log('---------------------');
-  console.info(message);
-  console.log('---------------------');
+const printHeader = (message) => {
+  log('---------------------');
+  log(chalk.black.bgCyan.bold(message));
+  log('---------------------');
 };
 
 const fatalError = (message) => {
-  console.log('---------------------');
-  console.error('Fatal Error:' + message);
-  console.log('---------------------');
+  log(chalk.black.bgRed.bold('🚨🚨🚨 Error: ' + message + ' 🚨🚨🚨'));
+  process.exit(1);
 };
 
 program.parse(process.argv);

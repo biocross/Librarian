@@ -16,8 +16,10 @@
   "author": "Siddharth Gupta",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.4.1",
     "commander": "^2.15.1",
     "inquirer": "^6.0.0",
-    "ngrok": "^3.0.1"
+    "ngrok": "^3.0.1",
+    "node-persist": "^3.0.1"
   }
 }
