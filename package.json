@@ -1,0 +1,23 @@
+{
+  "name": "librarian",
+  "version": "1.0.0",
+  "description": "Easily Host your iOS test builds onsite, cause local is best!",
+  "main": "librarian.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "local",
+    "build",
+    "server",
+    "fastlane",
+    "ci"
+  ],
+  "author": "Siddharth Gupta",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.15.1",
+    "inquirer": "^6.0.0",
+    "ngrok": "^3.0.1"
+  }
+}
