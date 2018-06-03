@@ -1,9 +1,11 @@
 const { prompt } = require('inquirer');
 const chalk = require('chalk');
 const os = require('os');
+const git = require('simple-git')
 
 const home = os.homedir();
 const configurationKey = 'librarian_config';
+const librarianWebRepo = 'https://github.com/biocross/Librarian-Template.git';
 
 const existingConfigurationConfirmation = [
   {
@@ -46,7 +48,9 @@ const beginSetup = async (storage) => {
   console.log(await storage.getItem(configurationKey));
 
   console.log(chalk.green('Cloning the Librarian WebServer: '));
-  
+  const localPath = `${configuration.working_directory}/web`
+  const cloned = await git(configuration.working_directory).clone(librarianWebRepo, localPath);
+  console.log(chalk.green('Cloning Complete!'));
 }
 
 const isSetup = async (storage) => {

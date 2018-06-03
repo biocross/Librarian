@@ -3,7 +3,7 @@ const ngrok = require('ngrok');
 const chalk = require('chalk');
 const preferences = require('node-persist');
 const os = require('os');
-const git = require('simple-git')
+const git = require('simple-git');
 const { spawn } = require('child_process');
 const { beginSetup, isSetup, shouldOverwriteConfiguration, configurationKey } = require('./setup.js');
 
@@ -45,10 +45,15 @@ program
   .alias('st')
   .description('Start the Librarian Server')
   .action(async () => {
+    await preferences.init(storageOptions);
+
+    if(!await isSetup(preferences)) {
+      fatalError('Librarian has not been setup yet! Run ' + chalk.yellow('librarian setup') + ' to begin')
+    }
 
     printHeader('Starting Librarian...');
 
-    await preferences.init(storageOptions);
+    
 
     const prefs = await preferences.getItem(configurationKey);
     const webPath = prefs.working_directory + 'web';
@@ -74,12 +79,12 @@ program
     // Start the ngrok tunnel to the webserver
     const tunnelURL = await ngrok.connect({ addr: webPort, bind_tls: true });
 
-    if (url == undefined || url === '') {
+    if (tunnelURL == undefined || tunnelURL === '') {
       fatalError('Failed to start the ngrok tunnel.')
     }
 
     log(chalk.blue("\nLibrarian is up at:\n"));
-    log(chalk.yellow.bold(url));
+    log(chalk.yellow.bold(tunnelURL));
   });
 
 
