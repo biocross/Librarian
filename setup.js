@@ -1,5 +1,17 @@
 const { prompt } = require('inquirer');
-const storage = require('node-persist');
+const chalk = require('chalk');
+const os = require('os');
+
+const home = os.homedir();
+const configurationKey = 'librarian_config';
+
+const existingConfigurationConfirmation = [
+  {
+    type: 'confirm',
+    name: 'existing_configuration',
+    message: 'Librarian has already been configured on this system. Do you want to reconfigure?'
+  }
+];
 
 const setupQuestions = [
   {
@@ -17,7 +29,7 @@ const setupQuestions = [
     type: 'input',
     name: 'working_directory',
     message: 'Where should Librarian store builds & it\'s website? Press enter for default:',
-    default: '~/librarian/'
+    default: `${home}/librarian/`
   },
   {
     type: 'input',
@@ -27,18 +39,25 @@ const setupQuestions = [
   },
 ];
 
-const beginSetup = async () => {
-  const answers = await prompt(setupQuestions);
-  
-  await storage.init( /* options ... */ );
-  await storage.setItem('name','yourname')
-  console.log(await storage.getItem('name'));
+const beginSetup = async (storage) => {
+  const configuration = await prompt(setupQuestions);
+  await storage.setItem(configurationKey, configuration);
+  console.log(chalk.green('Using Configuration: '));
+  console.log(await storage.getItem(configurationKey));
 
+  console.log(chalk.green('Cloning the Librarian WebServer: '));
+  
 }
 
-const isSetup = () => {
-  console("Is Setup?");
+const isSetup = async (storage) => {
+  const isSetup = await storage.getItem(configurationKey)
+  return isSetup !== undefined;
+};
+
+const shouldOverwriteConfiguration = async (storage) => {
+  const answer = await prompt(existingConfigurationConfirmation);
+  return answer.existing_configuration == true;
 };
 
 // Export all methods
-module.exports = { beginSetup, isSetup };
+module.exports = { beginSetup, isSetup, shouldOverwriteConfiguration, configurationKey };

@@ -1,24 +1,21 @@
 const program = require('commander');
 const ngrok = require('ngrok');
 const chalk = require('chalk');
-const storage = require('node-persist');
+const preferences = require('node-persist');
 const os = require('os');
+const git = require('simple-git')
 const { spawn } = require('child_process');
-const { beginSetup, isSetup } = require('./setup.js');
+const { beginSetup, isSetup, shouldOverwriteConfiguration, configurationKey } = require('./setup.js');
 
 const log = console.log;
-const jekyllCommand = 'jekyll serve --livereload';
 const home = os.homedir();
 const storageOptions = {
-  dir: `${home}/librarian/`,
+  dir: `${home}/librarian/configuration`,
   stringify: JSON.stringify,
   parse: JSON.parse,
   encoding: 'utf8',
   forgiveParseErrors: true
 };
-
-await storage.init(storageOptions);
-log("DB OK");
 
 program
   .version('1.0.0')
@@ -28,22 +25,40 @@ program
   .command('setup')
   .alias('s')
   .description('Setup Librarian to Run on your machine')
-  .action(() => {
+  .action(async () => {
     printHeader('Welcome to Librarian!');
-    beginSetup();
+    await preferences.init(storageOptions);
+
+    if(await isSetup(preferences)) {
+      if(await shouldOverwriteConfiguration(preferences)) {
+        await beginSetup(preferences);
+      }
+    } else {
+      await beginSetup(preferences);
+    }
+    
+    log(chalk.cyan.bold('\n\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
   });
 
 program
   .command('start')
   .alias('st')
   .description('Start the Librarian Server')
-  .action(() => {
+  .action(async () => {
 
     printHeader('Starting Librarian...');
 
-    const jekyll = spawn(jekyllCommand, {
+    await preferences.init(storageOptions);
+
+    const prefs = await preferences.getItem(configurationKey);
+    const webPath = prefs.working_directory + 'web';
+    const webPort = prefs.jekyll_port;
+    const webCommand = `jekyll serve --livereload --port ${webPort}`;
+
+    // Start the Jekyll Web Server
+    const jekyll = spawn(webCommand, {
       shell: true,
-      cwd: `${home}/Desktop/BuildKeeper/`
+      cwd: webPath
     });
 
     jekyll.stdout.on('data', (data) => {
@@ -56,18 +71,15 @@ program
       fatalError('The Jekyll Server has quit unexpectedly. Librarian is now exiting.');
     });
 
-    ngrok.connect({
-      addr: 4000,
-      bind_tls: true
-    }).then((url) => {
+    // Start the ngrok tunnel to the webserver
+    const tunnelURL = await ngrok.connect({ addr: webPort, bind_tls: true });
 
-      if (url == undefined || url === '') {
-        fatalError('Failed to start the ngrok tunnel.')
-      }
+    if (url == undefined || url === '') {
+      fatalError('Failed to start the ngrok tunnel.')
+    }
 
-      log(chalk.blue("\nLibrarian is up at:\n"));
-      log(chalk.yellow.bold(url));
-    });
+    log(chalk.blue("\nLibrarian is up at:\n"));
+    log(chalk.yellow.bold(url));
   });
 
 
