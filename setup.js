@@ -1,6 +1,7 @@
 const { prompt } = require('inquirer');
+const storage = require('node-persist');
 
-const setup = [
+const setupQuestions = [
   {
     type: 'confirm',
     name: 'existing_token',
@@ -17,12 +18,23 @@ const setup = [
     name: 'working_directory',
     message: 'Where should Librarian store builds & it\'s website? Press enter for default:',
     default: '~/librarian/'
-  }
+  },
+  {
+    type: 'input',
+    name: 'jekyll_port',
+    message: 'Which port should the Website Run at? (Default: 5000)',
+    default: '5000'
+  },
 ];
 
-const beginSetup = () => {
-  prompt(setup).then(answers => console.log(answers));
-};
+const beginSetup = async () => {
+  const answers = await prompt(setupQuestions);
+  
+  await storage.init( /* options ... */ );
+  await storage.setItem('name','yourname')
+  console.log(await storage.getItem('name'));
+
+}
 
 const isSetup = () => {
   console("Is Setup?");

@@ -8,6 +8,17 @@ const { beginSetup, isSetup } = require('./setup.js');
 
 const log = console.log;
 const jekyllCommand = 'jekyll serve --livereload';
+const home = os.homedir();
+const storageOptions = {
+  dir: `${home}/librarian/`,
+  stringify: JSON.stringify,
+  parse: JSON.parse,
+  encoding: 'utf8',
+  forgiveParseErrors: true
+};
+
+await storage.init(storageOptions);
+log("DB OK");
 
 program
   .version('1.0.0')
@@ -27,10 +38,8 @@ program
   .alias('st')
   .description('Start the Librarian Server')
   .action(() => {
-    
-    printHeader('Starting Librarian...');
 
-    let home = os.homedir();
+    printHeader('Starting Librarian...');
 
     const jekyll = spawn(jekyllCommand, {
       shell: true,
@@ -39,8 +48,12 @@ program
 
     jekyll.stdout.on('data', (data) => {
       if (data.indexOf('Server address:') > -1) {
-        log('Jekyll Server Started');
+        log(chalk.blue('Jekyll Server Started'));
       }
+    });
+
+    jekyll.on('exit', function (code, signal) {
+      fatalError('The Jekyll Server has quit unexpectedly. Librarian is now exiting.');
     });
 
     ngrok.connect({
@@ -52,8 +65,8 @@ program
         fatalError('Failed to start the ngrok tunnel.')
       }
 
-      log("Server is up at: ")
-      log(url);
+      log(chalk.blue("\nLibrarian is up at:\n"));
+      log(chalk.yellow.bold(url));
     });
   });
 
@@ -73,12 +86,8 @@ const printHeader = (message) => {
 };
 
 const fatalError = (message) => {
-  log(chalk.black.bgRed.bold('🚨🚨🚨 Error: ' + message + ' 🚨🚨🚨'));
+  log(chalk.white.bgRed.bold('🚨🚨🚨 Error: ' + message + ' 🚨🚨🚨'));
   process.exit(1);
 };
-
-function getUserHome() {
-  return process.env.HOME || process.env.USERPROFILE;
-}
 
 program.parse(process.argv);
