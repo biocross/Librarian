@@ -4,9 +4,9 @@ const chalk = require('chalk');
 const preferences = require('node-persist');
 const os = require('os');
 const git = require('simple-git');
+const ipa = require('ipa-metadata2');
 const { spawn } = require('child_process');
 const { beginSetup, isSetup, shouldOverwriteConfiguration, configurationKey } = require('./setup.js');
-
 const log = console.log;
 const home = os.homedir();
 const storageOptions = {
@@ -53,8 +53,6 @@ program
 
     printHeader('Starting Librarian...');
 
-    
-
     const prefs = await preferences.getItem(configurationKey);
     const webPath = prefs.working_directory + 'web';
     const webPort = prefs.jekyll_port;
@@ -89,11 +87,17 @@ program
 
 
 program
-  .command('submit')
+  .command('submit <pathToIPA> [releaseNotes]')
   .alias('a')
   .description('Submit a build to librarian')
-  .action(name => {
-    console.log("Starting Build Submission!")
+  .action(async (pathToIPA, releaseNotes) => {
+
+    // Check if file is accessible.
+
+    ipa(pathToIPA, function(error, data){
+      console.log(data.metadata);
+    });
+    
   });
 
 const printHeader = (message) => {

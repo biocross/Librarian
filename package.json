@@ -19,8 +19,10 @@
     "chalk": "^2.4.1",
     "commander": "^2.15.1",
     "inquirer": "^6.0.0",
+    "ipa-metadata2": "^1.4.1",
     "ngrok": "^3.0.1",
     "node-persist": "^3.0.1",
+    "plist": "^3.0.1",
     "simple-git": "^1.95.1"
   }
 }
