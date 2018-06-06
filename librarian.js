@@ -29,14 +29,14 @@ program
     printHeader('Welcome to Librarian!');
     await preferences.init(storageOptions);
 
-    if(await isSetup(preferences)) {
-      if(await shouldOverwriteConfiguration(preferences)) {
+    if (await isSetup(preferences)) {
+      if (await shouldOverwriteConfiguration(preferences)) {
         await beginSetup(preferences);
       }
     } else {
       await beginSetup(preferences);
     }
-    
+
     log(chalk.cyan.bold('\n\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
   });
 
@@ -47,7 +47,7 @@ program
   .action(async () => {
     await preferences.init(storageOptions);
 
-    if(!await isSetup(preferences)) {
+    if (!await isSetup(preferences)) {
       fatalError('Librarian has not been setup yet! Run ' + chalk.yellow('librarian setup') + ' to begin')
     }
 
@@ -94,10 +94,24 @@ program
 
     // Check if file is accessible.
 
-    ipa(pathToIPA, function(error, data){
-      console.log(data.metadata);
+    ipa(pathToIPA, function (error, data) {
+      
+      // if(error) {
+      //   fatalError("Failed to parse the given IPA file with error: " + error);
+      // }
+
+      const bundleIndentifier = data.metadata.CFBundleIdentifier;
+      const appName = data.metadata.CFBundleDisplayName;
+      const version = data.metadata.CFBundleShortVersionString;
+      const build = data.metadata.CFBundleVersion;
+
+      if(bundleIndentifier === undefined || appName === undefined || version === undefined || build === undefined) {
+        fatalError("The selected IPA is missing critical information.");
+      }
+
+      log(bundleIndentifier + " " + appName + " " + version + " " + build);
     });
-    
+
   });
 
 const printHeader = (message) => {
