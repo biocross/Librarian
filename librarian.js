@@ -3,10 +3,12 @@ const ngrok = require('ngrok');
 const chalk = require('chalk');
 const preferences = require('node-persist');
 const os = require('os');
+const fs = require('fs-extra');
 const git = require('simple-git');
 const ipa = require('ipa-metadata2');
+const plist = require('plist');
 const { spawn } = require('child_process');
-const { beginSetup, isSetup, shouldOverwriteConfiguration, configurationKey } = require('./setup.js');
+const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey } = require('./setup.js');
 const log = console.log;
 const home = os.homedir();
 const storageOptions = {
@@ -30,7 +32,8 @@ program
     await preferences.init(storageOptions);
 
     if (await isSetup(preferences)) {
-      if (await shouldOverwriteConfiguration(preferences)) {
+      if (await shouldOverwriteConfiguration()) {
+        await purgeExistingInstallation(preferences);
         await beginSetup(preferences);
       }
     } else {
@@ -81,6 +84,9 @@ program
       fatalError('Failed to start the ngrok tunnel.')
     }
 
+    configuration.currentURL = tunnelURL;
+    await storage.setItem(configurationKey, configuration);
+
     log(chalk.blue("\nLibrarian is up at:\n"));
     log(chalk.yellow.bold(tunnelURL));
   });
@@ -94,8 +100,10 @@ program
 
     // Check if file is accessible.
 
+    const prefs = await preferences.getItem(configurationKey);
+
     ipa(pathToIPA, function (error, data) {
-      
+
       // if(error) {
       //   fatalError("Failed to parse the given IPA file with error: " + error);
       // }
@@ -105,11 +113,21 @@ program
       const version = data.metadata.CFBundleShortVersionString;
       const build = data.metadata.CFBundleVersion;
 
-      if(bundleIndentifier === undefined || appName === undefined || version === undefined || build === undefined) {
+      if (bundleIndentifier === undefined || appName === undefined || version === undefined || build === undefined) {
         fatalError("The selected IPA is missing critical information.");
       }
 
-      log(bundleIndentifier + " " + appName + " " + version + " " + build);
+      let folderName = Date.now();
+
+      log(folderName + " " +  bundleIndentifier + " " + appName + " " + version + " " + build);
+
+      let plist = plist.parse(fs.readFileSync('/Users/sids/Downloads/plistProxy/public/man_copy.plist', 'utf8'));
+      plist.items[0].metadata["bundle-version"] = version;
+      plist.items[0].metadata["bundle-identifier"] = bundleIndentifier;
+      plist.items[0].metadata["title"] = appName;
+      plist.items[0].assets[0].url = prefs.tunnelURL + 'b/' + folderName + '/manifest.plist';
+
+      log(plist);
     });
 
   });

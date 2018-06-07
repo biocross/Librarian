@@ -1,8 +1,8 @@
 const { prompt } = require('inquirer');
 const chalk = require('chalk');
 const os = require('os');
-const git = require('simple-git')
-
+const fs = require('fs-extra');
+const git = require('simple-git');
 const home = os.homedir();
 const configurationKey = 'librarian_config';
 const librarianWebRepo = 'https://github.com/biocross/Librarian-Template.git';
@@ -25,7 +25,7 @@ const setupQuestions = [
     type: 'input',
     name: 'ngrok_token',
     message: 'Please enter your ngRok token:',
-    when: (answers) => { return answers.existing_token === true;  }
+    when: (answers) => { return answers.existing_token === true; }
   },
   {
     type: 'input',
@@ -41,11 +41,11 @@ const setupQuestions = [
   },
 ];
 
-const beginSetup = async (storage) => {
+const beginSetup = async (preferences) => {
   const configuration = await prompt(setupQuestions);
-  await storage.setItem(configurationKey, configuration);
+  await preferences.setItem(configurationKey, configuration);
   console.log(chalk.green('Using Configuration: '));
-  console.log(await storage.getItem(configurationKey));
+  console.log(await preferences.getItem(configurationKey));
 
   console.log(chalk.green('Cloning the Librarian WebServer: '));
   const localPath = `${configuration.working_directory}/web`
@@ -53,15 +53,21 @@ const beginSetup = async (storage) => {
   console.log(chalk.green('Cloning Complete!'));
 }
 
-const isSetup = async (storage) => {
-  const isSetup = await storage.getItem(configurationKey)
+const purgeExistingInstallation = async (preferences) => {
+  const prefs = await preferences.getItem(configurationKey)
+  console.log("Purging the Exsiting Installation at: " + prefs.working_directory);
+  await fs.emptyDir(prefs.working_directory);
+}
+
+const isSetup = async (preferences) => {
+  const isSetup = await preferences.getItem(configurationKey)
   return isSetup !== undefined;
 };
 
-const shouldOverwriteConfiguration = async (storage) => {
+const shouldOverwriteConfiguration = async () => {
   const answer = await prompt(existingConfigurationConfirmation);
   return answer.existing_configuration == true;
 };
 
 // Export all methods
-module.exports = { beginSetup, isSetup, shouldOverwriteConfiguration, configurationKey };
+module.exports = { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey };
