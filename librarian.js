@@ -85,8 +85,8 @@ program
       fatalError('Failed to start the ngrok tunnel.')
     }
 
-    configuration.currentURL = tunnelURL;
-    await storage.setItem(configurationKey, configuration);
+    prefs.currentURL = tunnelURL;
+    await preferences.setItem(configurationKey, prefs);
 
     log(chalk.blue("\nLibrarian is up at:\n"));
     log(chalk.yellow.bold(tunnelURL));
@@ -101,11 +101,17 @@ program
 
     // Check if file is accessible.
 
+    await preferences.init(storageOptions);
+
     if (!await isSetup(preferences)) {
       fatalError('Librarian has not been setup yet! Run ' + chalk.yellow('librarian setup') + ' to begin')
     }
 
     const prefs = await preferences.getItem(configurationKey);
+
+    if (prefs.currentURL === undefined) {
+      fatalError("Please start the librarian server with " + chalk.yellow('librarian start') + " before trying to submit a build");
+    }
 
     ipa(pathToIPA, function (error, data) {
 
@@ -119,20 +125,36 @@ program
       const build = data.metadata.CFBundleVersion;
 
       if (bundleIndentifier === undefined || appName === undefined || version === undefined || build === undefined) {
-        fatalError("The selected IPA is missing critical information.");
+        fatalError("The IPA is missing critical information.");
       }
 
       let folderName = Date.now();
+      let templatePath = prefs.working_directory + 'web/templates/manifest.plist';
+      let finalTemplatePath = prefs.working_directory + 'web/assets/b/' + folderName + '/manifest.plist';
+      let ipaPath = prefs.working_directory + 'web/assets/b/' + folderName + '/' + appName + '.ipa';
 
-      log(folderName + " " +  bundleIndentifier + " " + appName + " " + version + " " + build);
+      try {
+        fs.copySync(templatePath, finalTemplatePath);
+        fs.copySync(pathToIPA, ipaPath);
+        let plistFile = fs.readFileSync(finalTemplatePath, 'utf8');
 
-      let plist = plist.parse(fs.readFileSync('/Users/sids/Downloads/plistProxy/public/man_copy.plist', 'utf8'));
-      plist.items[0].metadata["bundle-version"] = version;
-      plist.items[0].metadata["bundle-identifier"] = bundleIndentifier;
-      plist.items[0].metadata["title"] = appName;
-      plist.items[0].assets[0].url = prefs.tunnelURL + 'b/' + folderName + '/manifest.plist';
+        if (plistFile === undefined) {
+          fatalError("Failed to modify the plist file just created.");
+        }
 
-      log(plist);
+        let editablePlist = plist.parse(plistFile);
+        editablePlist.items[0].metadata["bundle-version"] = version;
+        editablePlist.items[0].metadata["bundle-identifier"] = bundleIndentifier;
+        editablePlist.items[0].metadata["title"] = appName;
+        editablePlist.items[0].assets[0].url = prefs.currentURL + '/assets/b/' + folderName + '/' + appName + '.ipa';
+        fs.writeFileSync(finalTemplatePath, plist.build(editablePlist));
+      } catch (error) {
+        fatalError(error);
+      }
+
+      console.log(fs.readFileSync('/Users/sids/librarian/web/_posts/2018-03-23-6443.markdown', 'utf8'));
+
+
     });
 
   });
