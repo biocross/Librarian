@@ -146,13 +146,11 @@ program
         editablePlist.items[0].metadata["bundle-version"] = version;
         editablePlist.items[0].metadata["bundle-identifier"] = bundleIndentifier;
         editablePlist.items[0].metadata["title"] = appName;
-        editablePlist.items[0].assets[0].url = prefs.currentURL + '/assets/b/' + folderName + '/' + appName + '.ipa';
-        fs.writeFileSync(finalTemplatePath, plist.build(editablePlist));
+        editablePlist.items[0].assets[0].url = '{{site.data.config.webBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
+        fs.writeFileSync(finalTemplatePath, "---\n---\n\n" + plist.build(editablePlist));
       } catch (error) {
         fatalError(error);
       }
-
-      console.log(fs.readFileSync('/Users/sids/librarian/web/_posts/2018-03-23-6443.markdown', 'utf8'));
 
 
     });
