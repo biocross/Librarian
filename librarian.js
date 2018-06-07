@@ -18,6 +18,7 @@ const storageOptions = {
   encoding: 'utf8',
   forgiveParseErrors: true
 };
+const JEYLL_FRONT_MATTER_CHARACTER = "---\n---\n\n";
 
 program
   .version('1.0.0')
@@ -128,26 +129,26 @@ program
         fatalError("The IPA is missing critical information.");
       }
 
-      let folderName = Date.now();
-      let templatePath = prefs.working_directory + 'web/templates/manifest.plist';
-      let finalTemplatePath = prefs.working_directory + 'web/assets/b/' + folderName + '/manifest.plist';
-      let ipaPath = prefs.working_directory + 'web/assets/b/' + folderName + '/' + appName + '.ipa';
+      const folderName = Date.now();
+      const templatePath = prefs.working_directory + 'web/templates/manifest.plist';
+      const localManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/local/manifest.plist';
+      const webManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/web/manifest.plist';
+      const ipaPath = prefs.working_directory + 'web/assets/b/' + folderName + '/' + appName + '.ipa';
 
       try {
-        fs.copySync(templatePath, finalTemplatePath);
+        fs.copySync(templatePath, localManifestPath);
+        fs.copySync(templatePath, webManifestPath);
         fs.copySync(pathToIPA, ipaPath);
-        let plistFile = fs.readFileSync(finalTemplatePath, 'utf8');
-
-        if (plistFile === undefined) {
-          fatalError("Failed to modify the plist file just created.");
-        }
-
-        let editablePlist = plist.parse(plistFile);
+        
+        let manifest = fs.readFileSync(localManifestPath, 'utf8');
+        let editablePlist = plist.parse(manifest);
         editablePlist.items[0].metadata["bundle-version"] = version;
         editablePlist.items[0].metadata["bundle-identifier"] = bundleIndentifier;
         editablePlist.items[0].metadata["title"] = appName;
+        editablePlist.items[0].assets[0].url = '{{site.data.config.localBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
+        fs.writeFileSync(localManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
         editablePlist.items[0].assets[0].url = '{{site.data.config.webBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
-        fs.writeFileSync(finalTemplatePath, "---\n---\n\n" + plist.build(editablePlist));
+        fs.writeFileSync(webManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
       } catch (error) {
         fatalError(error);
       }
