@@ -34,6 +34,7 @@ program
     if (await isSetup(preferences)) {
       if (await shouldOverwriteConfiguration()) {
         await purgeExistingInstallation(preferences);
+        await preferences.init(storageOptions);
         await beginSetup(preferences);
       }
     } else {

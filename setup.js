@@ -19,7 +19,8 @@ const setupQuestions = [
   {
     type: 'confirm',
     name: 'existing_token',
-    message: 'Do you already have an ngRok token? Press n if you\'re unsure'
+    message: 'Do you already have an ngRok token? Press n if you\'re unsure',
+    default: false
   },
   {
     type: 'input',
@@ -43,14 +44,16 @@ const setupQuestions = [
 
 const beginSetup = async (preferences) => {
   const configuration = await prompt(setupQuestions);
-  await preferences.setItem(configurationKey, configuration);
+  
   console.log(chalk.green('Using Configuration: '));
-  console.log(await preferences.getItem(configurationKey));
+  console.log(configuration);
 
   console.log(chalk.green('Cloning the Librarian WebServer: '));
   const localPath = `${configuration.working_directory}/web`
   const cloned = await git(configuration.working_directory).clone(librarianWebRepo, localPath);
   console.log(chalk.green('Cloning Complete!'));
+
+  await preferences.setItem(configurationKey, configuration);
 }
 
 const purgeExistingInstallation = async (preferences) => {
