@@ -57,6 +57,7 @@ const purgeExistingInstallation = async (preferences) => {
   const prefs = await preferences.getItem(configurationKey)
   console.log("Purging the Exsiting Installation at: " + prefs.working_directory);
   await fs.emptyDir(prefs.working_directory);
+  console.log("Purge Complete!");
 }
 
 const isSetup = async (preferences) => {
@@ -69,5 +70,4 @@ const shouldOverwriteConfiguration = async () => {
   return answer.existing_configuration == true;
 };
 
-// Export all methods
 module.exports = { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey };

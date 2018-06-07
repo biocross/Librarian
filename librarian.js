@@ -100,6 +100,10 @@ program
 
     // Check if file is accessible.
 
+    if (!await isSetup(preferences)) {
+      fatalError('Librarian has not been setup yet! Run ' + chalk.yellow('librarian setup') + ' to begin')
+    }
+
     const prefs = await preferences.getItem(configurationKey);
 
     ipa(pathToIPA, function (error, data) {
@@ -139,7 +143,7 @@ const printHeader = (message) => {
 };
 
 const fatalError = (message) => {
-  log(chalk.white.bgRed.bold('🚨🚨🚨 Error: ' + message + ' 🚨🚨🚨'));
+  log(chalk.white.bold('🚨🚨🚨 Error: ' + message + ' 🚨🚨🚨'));
   process.exit(1);
 };
 
