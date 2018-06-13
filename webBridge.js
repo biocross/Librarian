@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const home = os.homedir();
 const { configurationKey } = require('./setup.js');
 const webConfigurationPath = 'web/_data/config.json';
-const buildsPath = 'web/_data/builds.json';
+const buildsDataPath = 'web/_data/builds.json';
 
 const setWebConfiguration = async (preferences, configuration) => {
     try {
@@ -23,7 +23,7 @@ const setWebConfiguration = async (preferences, configuration) => {
 const addBuild = async (preferences, build) => {
     try {
         const prefs = await preferences.getItem(configurationKey);
-        const buildsPath = prefs.working_directory + buildsPath;
+        const buildsPath = prefs.working_directory + buildsDataPath;
         const builds = JSON.parse(fs.readFileSync(buildsPath, 'utf8'));
         builds.push(build);
         console.log(builds);
