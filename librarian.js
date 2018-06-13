@@ -9,6 +9,7 @@ const ipa = require('ipa-metadata2');
 const plist = require('plist');
 const { spawn } = require('child_process');
 const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey } = require('./setup.js');
+const { setWebConfiguration, addBuild } = require('./webBridge.js');
 const log = console.log;
 const home = os.homedir();
 const storageOptions = {
@@ -91,6 +92,12 @@ program
 
     log(chalk.blue("\nLibrarian is up at:\n"));
     log(chalk.yellow.bold(tunnelURL));
+
+    let webConfiguration = {
+      "webBaseURL": prefs.currentURL,
+      "localBaseURL": prefs.local_ip
+    };
+    setWebConfiguration(preferences, webConfiguration);
   });
 
 
@@ -139,7 +146,7 @@ program
         fs.copySync(templatePath, localManifestPath);
         fs.copySync(templatePath, webManifestPath);
         fs.copySync(pathToIPA, ipaPath);
-        
+
         let manifest = fs.readFileSync(localManifestPath, 'utf8');
         let editablePlist = plist.parse(manifest);
         editablePlist.items[0].metadata["bundle-version"] = version;

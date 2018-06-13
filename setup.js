@@ -36,10 +36,16 @@ const setupQuestions = [
   },
   {
     type: 'input',
-    name: 'jekyll_port',
-    message: 'Which port should the Website Run at? (Default: 5000)',
-    default: '5000'
+    name: 'local_ip',
+    message: 'What is the local IP Librarian Website should be running at? (Enter for autodetected default)',
+    default: os.networkInterfaces().en0.find(elm => elm.family == 'IPv4').address
   },
+  {
+    type: 'input',
+    name: 'jekyll_port',
+    message: 'Which port should the Librarian Website run at? (Default: 5000)',
+    default: '5000'
+  }
 ];
 
 const beginSetup = async (preferences) => {
