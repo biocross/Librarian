@@ -62,7 +62,7 @@ program
     const prefs = await preferences.getItem(configurationKey);
     const webPath = prefs.working_directory + 'web';
     const webPort = prefs.jekyll_port;
-    const webCommand = `jekyll serve --livereload --port ${webPort}`;
+    const webCommand = `JEKYLL_ENV=production jekyll serve --port ${webPort}`;
 
     // Start the Jekyll Web Server
     const jekyll = spawn(webCommand, {
