@@ -13,7 +13,6 @@ const setWebConfiguration = async (preferences, configuration) => {
         const webConfigPath = prefs.working_directory + webConfigurationPath;
         const webConfiguration = JSON.parse(fs.readFileSync(webConfigPath, 'utf8'));
         Object.assign(webConfiguration, configuration);
-        console.log(webConfiguration);
         fs.writeFileSync(webConfigPath, JSON.stringify(webConfiguration));
     } catch (error) {
         console.log(error);
@@ -26,7 +25,6 @@ const addBuild = async (preferences, build) => {
         const buildsPath = prefs.working_directory + buildsDataPath;
         const builds = JSON.parse(fs.readFileSync(buildsPath, 'utf8'));
         builds.push(build);
-        console.log(builds);
         fs.writeFileSync(buildsPath, JSON.stringify(builds));
     } catch (error) {
         console.log(error);

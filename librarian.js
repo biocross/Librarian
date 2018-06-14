@@ -102,10 +102,10 @@ program
 
 
 program
-  .command('submit <pathToIPA> [releaseNotes]')
+  .command('submit <pathToIPA> [branch] [releaseNotes]')
   .alias('a')
   .description('Submit a build to librarian')
-  .action(async (pathToIPA, releaseNotes) => {
+  .action(async (pathToIPA, branch, releaseNotes) => {
 
     // Check if file is accessible.
 
@@ -136,7 +136,8 @@ program
         fatalError("The IPA is missing critical information.");
       }
 
-      const folderName = Date.now();
+      const buildTime = new Date();
+      const folderName = buildTime.getTime();
       const templatePath = prefs.working_directory + 'web/templates/manifest.plist';
       const localManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/local/manifest.plist';
       const webManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/web/manifest.plist';
@@ -160,7 +161,24 @@ program
         fatalError(error);
       }
 
+      let buildInfo = {
+        "version": version,
+        "buildNumber": bundleIndentifier,
+        "folderPath": folderName,
+        "date": buildTime.toISOString()
+      };
 
+      if (releaseNotes) {
+        buildInfo.releaseNotes = releaseNotes;
+      }
+
+      if (branch) {
+        buildInfo.branch = branch;
+      }
+
+      addBuild(preferences, buildInfo);
+      
+      process.exit(0);
     });
 
   });
