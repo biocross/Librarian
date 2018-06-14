@@ -22,8 +22,15 @@ const setWebConfiguration = async (preferences, configuration) => {
 const addBuild = async (preferences, build) => {
     try {
         const prefs = await preferences.getItem(configurationKey);
+        const webConfigPath = prefs.working_directory + webConfigurationPath;
+        const webConfiguration = JSON.parse(fs.readFileSync(webConfigPath, 'utf8'));
         const buildsPath = prefs.working_directory + buildsDataPath;
-        const builds = JSON.parse(fs.readFileSync(buildsPath, 'utf8'));
+        let builds = JSON.parse(fs.readFileSync(buildsPath, 'utf8'));
+
+        if (!webConfiguration.initialized) {
+            await setWebConfiguration(preferences, { "initialized": true })
+            builds = [];
+        }
         builds.push(build);
         fs.writeFileSync(buildsPath, JSON.stringify(builds));
     } catch (error) {
