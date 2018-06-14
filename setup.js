@@ -50,6 +50,10 @@ const setupQuestions = [
 
 const beginSetup = async (preferences) => {
   const configuration = await prompt(setupQuestions);
+
+  if(configuration.local_ip.indexOf('http') == -1) {
+    configuration.local_ip = 'http://' + configuration.local_ip;
+  }
   
   console.log(chalk.green('Using Configuration: '));
   console.log(configuration);

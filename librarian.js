@@ -97,7 +97,7 @@ program
       "webBaseURL": prefs.currentURL,
       "localBaseURL": prefs.local_ip
     };
-    setWebConfiguration(preferences, webConfiguration);
+    await setWebConfiguration(preferences, webConfiguration);
   });
 
 
@@ -121,7 +121,7 @@ program
       fatalError("Please start the librarian server with " + chalk.yellow('librarian start') + " before trying to submit a build");
     }
 
-    ipa(pathToIPA, function (error, data) {
+    ipa(pathToIPA, async function (error, data) {
 
       // if(error) {
       //   fatalError("Failed to parse the given IPA file with error: " + error);
@@ -176,7 +176,7 @@ program
         buildInfo.branch = branch;
       }
 
-      addBuild(preferences, buildInfo);
+      await addBuild(preferences, buildInfo);
       
       process.exit(0);
     });
