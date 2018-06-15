@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const program = require('commander');
 const ngrok = require('ngrok');
 const chalk = require('chalk');

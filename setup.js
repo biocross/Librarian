@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const { prompt } = require('inquirer');
 const chalk = require('chalk');
 const os = require('os');
@@ -59,7 +60,7 @@ const beginSetup = async (preferences) => {
   console.log(configuration);
 
   console.log(chalk.green('Cloning the Librarian WebServer: '));
-  const localPath = `${configuration.working_directory}/web`
+  const localPath = `${configuration.working_directory}/web`;
   const cloned = await git(configuration.working_directory).clone(librarianWebRepo, localPath);
   console.log(chalk.green('Cloning Complete!'));
 
@@ -67,14 +68,14 @@ const beginSetup = async (preferences) => {
 }
 
 const purgeExistingInstallation = async (preferences) => {
-  const prefs = await preferences.getItem(configurationKey)
+  const prefs = await preferences.getItem(configurationKey);
   console.log("Purging the Exsiting Installation at: " + prefs.working_directory);
   await fs.emptyDir(prefs.working_directory);
   console.log("Purge Complete!");
 }
 
 const isSetup = async (preferences) => {
-  const isSetup = await preferences.getItem(configurationKey)
+  const isSetup = await preferences.getItem(configurationKey);
   return isSetup !== undefined;
 };
 
