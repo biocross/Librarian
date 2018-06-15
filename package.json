@@ -26,6 +26,6 @@
     "ngrok": "^3.0.1",
     "node-persist": "^3.0.1",
     "plist": "^3.0.1",
-    "simple-git": "^1.95.1"
+    "simple-git": "^1.96.0"
   }
 }
