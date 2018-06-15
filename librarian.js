@@ -7,6 +7,7 @@ const os = require('os');
 const fs = require('fs-extra');
 const ipa = require('ipa-metadata2');
 const plist = require('plist');
+const qrcode = require('qrcode-terminal');
 const { spawn } = require('child_process');
 const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey } = require('./setup.js');
 const { setWebConfiguration, addBuild } = require('./webBridge.js');
@@ -72,7 +73,7 @@ program
 
     jekyll.stdout.on('data', (data) => {
       if (data.indexOf('Server address:') > -1) {
-        log(chalk.blue('Jekyll Server Started'));
+        log('Jekyll Server Started');
       }
     });
 
@@ -90,7 +91,7 @@ program
     prefs.currentURL = tunnelURL;
     await preferences.setItem(configurationKey, prefs);
 
-    log(chalk.blue("\nLibrarian is up at:\n"));
+    log('\nLibrarian is up at:\n');
     log(chalk.yellow.bold(tunnelURL));
 
     let webConfiguration = {
@@ -98,6 +99,9 @@ program
       "localBaseURL": prefs.local_ip
     };
     await setWebConfiguration(preferences, webConfiguration);
+
+    log('\nScan the QR code to jump to Librarian\'s web interface:');
+    qrcode.generate(tunnelURL);
   });
 
 
