@@ -5,6 +5,7 @@ const os = require('os');
 const fs = require('fs-extra');
 const git = require('simple-git/promise');
 const home = os.homedir();
+
 const configurationKey = 'librarian_config';
 const librarianWebRepo = 'https://github.com/biocross/Librarian-Template.git';
 
@@ -56,10 +57,10 @@ const beginSetup = async (preferences) => {
     configuration.local_ip = 'http://' + configuration.local_ip + ':' + configuration.jekyll_port;
   }
   
-  console.log(chalk.green('Using Configuration: '));
+  console.log(chalk.green('\nUsing Configuration: \n'));
   console.log(configuration);
 
-  console.log(chalk.green('Cloning the Librarian WebServer: '));
+  console.log(chalk.green('\nCloning the Librarian WebServer...'));
   const localPath = `${configuration.working_directory}/web`;
   const cloned = await git(configuration.working_directory).clone(librarianWebRepo, localPath);
   console.log(chalk.green('Cloning Complete!'));
@@ -71,7 +72,7 @@ const purgeExistingInstallation = async (preferences) => {
   const prefs = await preferences.getItem(configurationKey);
   console.log("Purging the Exsiting Installation at: " + prefs.working_directory);
   await fs.emptyDir(prefs.working_directory);
-  console.log("Purge Complete!");
+  console.log("Purge Complete!\n");
 }
 
 const isSetup = async (preferences) => {

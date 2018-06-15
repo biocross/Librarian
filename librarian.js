@@ -43,7 +43,7 @@ program
       await beginSetup(preferences);
     }
 
-    log(chalk.cyan.bold('\n\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
+    log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
   });
 
 program
