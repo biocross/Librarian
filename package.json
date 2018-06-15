@@ -11,7 +11,9 @@
     "build",
     "server",
     "fastlane",
-    "ci"
+    "ci",
+    "ios",
+    "enterprise"
   ],
   "author": "Siddharth Gupta",
   "license": "MIT",

@@ -5,7 +5,6 @@ const chalk = require('chalk');
 const preferences = require('node-persist');
 const os = require('os');
 const fs = require('fs-extra');
-const git = require('simple-git');
 const ipa = require('ipa-metadata2');
 const plist = require('plist');
 const { spawn } = require('child_process');
@@ -108,8 +107,6 @@ program
   .description('Submit a build to librarian')
   .action(async (pathToIPA, branch, releaseNotes) => {
 
-    // Check if file is accessible.
-
     await preferences.init(storageOptions);
 
     if (!await isSetup(preferences)) {
@@ -120,6 +117,10 @@ program
 
     if (prefs.currentURL === undefined) {
       fatalError("Please start the librarian server with " + chalk.yellow('librarian start') + " before trying to submit a build");
+    }
+
+    if(!fs.existsSync(pathToIPA)) {
+      fatalError('Couldn\'t find or access the IPA in the given path: ' + pathToIPA);
     }
 
     ipa(pathToIPA, async function (error, data) {
@@ -191,7 +192,7 @@ const printHeader = (message) => {
 };
 
 const fatalError = (message) => {
-  log(chalk.white.bold('🚨🚨🚨 Error: ' + message + ' 🚨🚨🚨'));
+  log(chalk.red.bold('🚨 Error: ' + message + ' 🚨'));
   process.exit(1);
 };
 
