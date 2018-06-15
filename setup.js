@@ -62,7 +62,7 @@ const beginSetup = async (preferences) => {
 
   console.log(chalk.green('\nCloning the Librarian WebServer...'));
   const localPath = `${configuration.working_directory}/web`;
-  const cloned = await git(configuration.working_directory).clone(librarianWebRepo, localPath);
+  await git(configuration.working_directory).clone(librarianWebRepo, localPath, ['--depth', 1]);
   console.log(chalk.green('Cloning Complete!'));
 
   await preferences.setItem(configurationKey, configuration);

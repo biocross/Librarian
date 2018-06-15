@@ -81,7 +81,7 @@ program
     });
 
     // Start the ngrok tunnel to the webserver
-    const tunnelURL = await ngrok.connect({ addr: webPort, bind_tls: true });
+    const tunnelURL = await ngrok.connect({ addr: webPort });
 
     if (tunnelURL == undefined || tunnelURL === '') {
       fatalError('Failed to start the ngrok tunnel.')
