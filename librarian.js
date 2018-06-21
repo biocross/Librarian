@@ -13,6 +13,8 @@ const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstalla
 const { setWebConfiguration, addBuild } = require('./webBridge.js');
 const log = console.log;
 const home = os.homedir();
+const updateNotifier = require('update-notifier');
+const pkg = require('./package.json');
 const storageOptions = {
   dir: `${home}/librarian/configuration`,
   stringify: JSON.stringify,
@@ -44,6 +46,7 @@ program
       await beginSetup(preferences);
     }
 
+    await checkForUpdate(preferences);
     log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
   });
 
@@ -91,7 +94,7 @@ program
     prefs.currentURL = tunnelURL;
     await preferences.setItem(configurationKey, prefs);
 
-    log('\nLibrarian is up at:\n');
+    log('\nLibrarian is up at: ');
     log(chalk.yellow.bold(tunnelURL));
 
     let webConfiguration = {
@@ -102,6 +105,8 @@ program
 
     log('\nScan the QR code to jump to Librarian\'s web interface:');
     qrcode.generate(tunnelURL);
+
+    await checkForUpdate(preferences);
   });
 
 
@@ -126,7 +131,7 @@ program
       fatalError("Please start the librarian server with " + chalk.yellow('librarian start') + " before trying to submit a build");
     }
 
-    if(!fs.existsSync(pathToIPA)) {
+    if (!fs.existsSync(pathToIPA)) {
       fatalError('Couldn\'t find or access the IPA in the given path: ' + pathToIPA);
     }
 
@@ -189,11 +194,33 @@ program
       buildInfo.platform = options.platform ? options.platform : "ios";
 
       await addBuild(preferences, buildInfo);
-      
+      await checkForUpdate(preferences);
       process.exit(0);
     });
 
   });
+
+const checkForUpdate = async (preferences) => {
+  const notifier = updateNotifier({ pkg });
+  notifier.notify();
+  if (notifier.update) {
+    const configuration = {
+      "update": {
+        "available": true,
+        "notes": `An update to librarian is available! The new version is ${notifier.update.latest}. (You have ${notifier.update.current})`
+      }
+    }
+    await setWebConfiguration(preferences, configuration);
+  } else {
+    const configuration = {
+      "update": {
+        "available": false,
+        "notes": ""
+      }
+    }
+    await setWebConfiguration(preferences, configuration);
+  }
+}
 
 const printHeader = (message) => {
   log('---------------------');
