@@ -106,10 +106,13 @@ program
 
 
 program
-  .command('submit <pathToIPA> [branch] [releaseNotes]')
+  .command('submit <pathToIPA>')
   .alias('a')
+  .option('-b, --branch <branch>', 'The branch the build is from')
+  .option('-n, --notes <notes>', 'Release Notes for the build')
+  .option('-p, --private', 'Only allow the build to be downloaded on the local network')
   .description('Submit a build to librarian')
-  .action(async (pathToIPA, branch, releaseNotes) => {
+  .action(async (pathToIPA, options) => {
 
     await preferences.init(storageOptions);
 
@@ -174,13 +177,16 @@ program
         "date": buildTime.toISOString()
       };
 
-      if (releaseNotes) {
-        buildInfo.releaseNotes = releaseNotes;
+      if (options.notes) {
+        buildInfo.notes = options.notes;
       }
 
-      if (branch) {
-        buildInfo.branch = branch;
+      if (options.branch) {
+        buildInfo.branch = options.branch;
       }
+
+      buildInfo.public = options.private ? false : true;
+      buildInfo.platform = options.platform ? options.platform : "ios";
 
       await addBuild(preferences, buildInfo);
       
