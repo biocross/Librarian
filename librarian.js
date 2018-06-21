@@ -141,12 +141,12 @@ program
       //   fatalError("Failed to parse the given IPA file with error: " + error);
       // }
 
-      const bundleIndentifier = data.metadata.CFBundleIdentifier;
+      const bundleIdentifier = data.metadata.CFBundleIdentifier;
       const appName = data.metadata.CFBundleDisplayName;
       const version = data.metadata.CFBundleShortVersionString;
       const build = data.metadata.CFBundleVersion;
 
-      if (bundleIndentifier === undefined || appName === undefined || version === undefined || build === undefined) {
+      if (bundleIdentifier === undefined || appName === undefined || version === undefined || build === undefined) {
         fatalError("The IPA is missing critical information.");
       }
 
@@ -165,7 +165,7 @@ program
         let manifest = fs.readFileSync(localManifestPath, 'utf8');
         let editablePlist = plist.parse(manifest);
         editablePlist.items[0].metadata["bundle-version"] = version;
-        editablePlist.items[0].metadata["bundle-identifier"] = bundleIndentifier;
+        editablePlist.items[0].metadata["bundle-identifier"] = bundleIdentifier;
         editablePlist.items[0].metadata["title"] = appName;
         editablePlist.items[0].assets[0].url = '{{site.data.config.localBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
         fs.writeFileSync(localManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
@@ -177,7 +177,8 @@ program
 
       let buildInfo = {
         "version": version,
-        "buildNumber": bundleIndentifier,
+        "buildNumber": build,
+        "bundle": bundleIdentifier,
         "folderPath": folderName,
         "date": buildTime.toISOString()
       };
