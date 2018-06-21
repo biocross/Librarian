@@ -207,7 +207,7 @@ const checkForUpdate = async (preferences) => {
     const configuration = {
       "update": {
         "available": true,
-        "notes": `An update to librarian is available! The new version is ${notifier.update.latest}. (You have ${notifier.update.current})`
+        "notes": `An Update to Librarian is available! The new version is ${notifier.update.latest} (You have ${notifier.update.current})`
       }
     }
     await setWebConfiguration(preferences, configuration);
