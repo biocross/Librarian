@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const preferences = require('node-persist');
 const os = require('os');
 const fs = require('fs-extra');
-const ipa = require('ipa-metadata2');
+const { Extract } = require('app-metadata');
 const plist = require('plist');
 const qrcode = require('qrcode-terminal');
 const { spawn } = require('child_process');
@@ -111,13 +111,13 @@ program
 
 
 program
-  .command('submit <pathToIPA>')
+  .command('submit <pathToFile>')
   .alias('a')
   .option('-b, --branch <branch>', 'The branch the build is from')
   .option('-n, --notes <notes>', 'Release Notes for the build')
-  .option('-p, --private', 'Only allow the build to be downloaded on the local network')
+  .option('-p, --public', 'Allow the build to be downloaded via the Internet using Librarian\'s HTTPS Tunnel')
   .description('Submit a build to librarian')
-  .action(async (pathToIPA, options) => {
+  .action(async (pathToFile, options) => {
 
     await preferences.init(storageOptions);
 
@@ -131,20 +131,19 @@ program
       fatalError("Please start the librarian server with " + chalk.yellow('librarian start') + " before trying to submit a build");
     }
 
-    if (!fs.existsSync(pathToIPA)) {
-      fatalError('Couldn\'t find or access the IPA in the given path: ' + pathToIPA);
+    if (!fs.existsSync(pathToFile)) {
+      fatalError('Couldn\'t find or access the file in the given path: ' + pathToFile);
     }
 
-    ipa(pathToIPA, async function (error, data) {
+    const metadata = await Extract.run(pathToFile);
+    const bundleIdentifier = metadata.uniqueIdentifier;
+    const version = metadata.version;
+    const build = metadata.buildVersion;
+    const platform = metadata.deviceFamily.indexOf("Android") > -1 ? "android" : "ios";
+    let buildInfo;
 
-      // if(error) {
-      //   fatalError("Failed to parse the given IPA file with error: " + error);
-      // }
-
-      const bundleIdentifier = data.metadata.CFBundleIdentifier;
-      const appName = data.metadata.CFBundleDisplayName;
-      const version = data.metadata.CFBundleShortVersionString;
-      const build = data.metadata.CFBundleVersion;
+    if (platform == "ios") {
+      const appName = metadata.displayName;
 
       if (bundleIdentifier === undefined || appName === undefined || version === undefined || build === undefined) {
         fatalError("The IPA is missing critical information.");
@@ -160,7 +159,7 @@ program
       try {
         fs.copySync(templatePath, localManifestPath);
         fs.copySync(templatePath, webManifestPath);
-        fs.copySync(pathToIPA, ipaPath);
+        fs.copySync(pathToFile, ipaPath);
 
         let manifest = fs.readFileSync(localManifestPath, 'utf8');
         let editablePlist = plist.parse(manifest);
@@ -175,30 +174,53 @@ program
         fatalError(error);
       }
 
-      let buildInfo = {
+      buildInfo = {
         "version": version,
         "buildNumber": build,
         "bundle": bundleIdentifier,
         "folderPath": folderName,
         "date": buildTime.toISOString()
       };
+    } else {
+      const appName = metadata.originalFileName;
+      const buildTime = new Date();
+      const folderName = buildTime.getTime();
+      const apkPath = prefs.working_directory + 'web/assets/b/' + folderName + '/' + appName;
 
-      if (options.notes) {
-        buildInfo.notes = options.notes;
+      if (bundleIdentifier === undefined || appName === undefined || version === undefined || build === undefined) {
+        fatalError("The APK is missing critical information.");
       }
 
-      if (options.branch) {
-        buildInfo.branch = options.branch;
+      try {
+        fs.copySync(pathToFile, apkPath);
+      } catch (error) {
+        fatalError(error);
       }
 
-      buildInfo.public = options.private ? false : true;
-      buildInfo.platform = options.platform ? options.platform : "ios";
+      buildInfo = {
+        "version": version,
+        "buildNumber": build,
+        "bundle": bundleIdentifier,
+        "folderPath": folderName,
+        "fileName": appName,
+        "date": buildTime.toISOString()
+      };
+    }
 
-      await addBuild(preferences, buildInfo);
-      await checkForUpdate(preferences);
-      process.exit(0);
-    });
+    if (options.notes) {
+      buildInfo.notes = options.notes;
+    }
 
+    if (options.branch) {
+      buildInfo.branch = options.branch;
+    }
+
+    buildInfo.public = options.public ? true : false;
+    buildInfo.platform = platform;
+
+    await addBuild(preferences, buildInfo);
+    await checkForUpdate(preferences);
+    process.exit(0);
   });
 
 const checkForUpdate = async (preferences) => {
