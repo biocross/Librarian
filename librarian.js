@@ -5,16 +5,16 @@ const chalk = require('chalk');
 const preferences = require('node-persist');
 const os = require('os');
 const fs = require('fs-extra');
-const { Extract } = require('app-metadata');
 const plist = require('plist');
 const qrcode = require('qrcode-terminal');
-const { spawn } = require('child_process');
-const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey } = require('./setup.js');
-const { setWebConfiguration, addBuild } = require('./webBridge.js');
 const log = console.log;
 const home = os.homedir();
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
+const { Extract } = require('app-metadata');
+const { spawn } = require('child_process');
+const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey } = require('./setup.js');
+const { setWebConfiguration, addBuild } = require('./webBridge.js');
 const storageOptions = {
   dir: `${home}/librarian/configuration`,
   stringify: JSON.stringify,
@@ -207,14 +207,8 @@ program
       };
     }
 
-    if (options.notes) {
-      buildInfo.notes = options.notes;
-    }
-
-    if (options.branch) {
-      buildInfo.branch = options.branch;
-    }
-
+    buildInfo.notes = options.notes ? options.notes : "";
+    buildInfo.branch = options.branch ? options.branch : "";
     buildInfo.public = options.public ? true : false;
     buildInfo.platform = platform;
 
