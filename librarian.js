@@ -78,6 +78,9 @@ program
       if (data.indexOf('Server address:') > -1) {
         log('Jekyll Server Started');
       }
+      if (String(data).toLowerCase().indexOf('error') > -1) {
+        log(String(data));
+      }
     });
 
     jekyll.on('exit', function (code, signal) {
@@ -85,7 +88,18 @@ program
     });
 
     // Start the ngrok tunnel to the webserver
-    const tunnelURL = await ngrok.connect({ addr: webPort });
+    let tunnelURL;
+
+    try {
+      if(prefs.ngrok_token && prefs.ngrok_token !== "") {
+        tunnelURL = await ngrok.connect({ authtoken: prefs.ngrok_token, addr: webPort });
+      } else {
+        tunnelURL = await ngrok.connect({ addr: webPort });
+      }
+    } catch(error) {
+      log(JSON.stringify(error));
+      fatalError("\nFailed to start the ngrok tunnel.\nPlease make sure your ngRok token is valid.");
+    }
 
     if (tunnelURL == undefined || tunnelURL === '') {
       fatalError('Failed to start the ngrok tunnel.')

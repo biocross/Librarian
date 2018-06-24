@@ -13,23 +13,12 @@ const existingConfigurationConfirmation = [
   {
     type: 'confirm',
     name: 'existing_configuration',
-    message: 'Librarian has already been configured on this system. Do you want to reconfigure?'
+    message: 'Librarian has already been configured on this system. Do you want to reconfigure?',
+    default: false
   }
 ];
 
 const setupQuestions = [
-  {
-    type: 'confirm',
-    name: 'existing_token',
-    message: 'Do you already have an ngRok token? Press n if you\'re unsure',
-    default: false
-  },
-  {
-    type: 'input',
-    name: 'ngrok_token',
-    message: 'Please enter your ngRok token:',
-    when: (answers) => { return answers.existing_token === true; }
-  },
   {
     type: 'input',
     name: 'working_directory',
@@ -47,6 +36,18 @@ const setupQuestions = [
     name: 'jekyll_port',
     message: 'Which port should the Librarian Website run at? (Default: 5000)',
     default: '5000'
+  },
+  {
+    type: 'confirm',
+    name: 'existing_token',
+    message: 'Do you already have an ngRok token? Press n if you\'re unsure (Why: )',
+    default: false
+  },
+  {
+    type: 'input',
+    name: 'ngrok_token',
+    message: 'Please enter your ngRok token:',
+    when: (answers) => { return answers.existing_token === true; }
   }
 ];
 
@@ -70,7 +71,7 @@ const beginSetup = async (preferences) => {
 
 const purgeExistingInstallation = async (preferences) => {
   const prefs = await preferences.getItem(configurationKey);
-  console.log("Purging the Exsiting Installation at: " + prefs.working_directory);
+  console.log("Purging the Existing Installation at: " + prefs.working_directory);
   await fs.emptyDir(prefs.working_directory);
   console.log("Purge Complete!\n");
 }
