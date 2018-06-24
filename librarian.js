@@ -251,3 +251,13 @@ const fatalError = (message) => {
 };
 
 program.parse(process.argv);
+
+process.on('SIGINT', async function() {
+  log("\nExiting...")
+  await preferences.init(storageOptions);
+  const prefs = await preferences.getItem(configurationKey);
+  prefs.currentURL = undefined;
+  await preferences.setItem(configurationKey, prefs);
+  printHeader("Thanks for using Librarian!");
+  process.exit(0);
+});
