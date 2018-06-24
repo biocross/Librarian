@@ -30,7 +30,7 @@ const addBuild = async (preferences, build) => {
         if (!webConfiguration.initialized) {
             await setWebConfiguration(preferences, { "initialized": true })
         }
-        const contents = `---\n${yaml.safeDump(build)}---\n`
+        const contents = `---\nlayout: build\n${yaml.safeDump(build)}---\n`
         fs.writeFileSync(buildPath, contents);
     } catch (error) {
         console.log(error);
