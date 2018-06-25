@@ -58,8 +58,6 @@ Option | Short | Example | Description
 Librarian will autodetect the type of build `iOS / Android` using the file extension, will create a copy of the build in it's assets, and make it available for download on it's web interface.
 
 > The Librarian server should be running while submitting a build.
-\
-\
 
 ## Updating Librarian
 
@@ -69,6 +67,14 @@ Librarian follows [semantic versioning](https://semver.org/). You can update by 
 $ npm i -g librarian
 $ librarian update
 ```
+
+## Contributing
+
+Librarian is built up of two parts:
+
+- [Librarian](https://github.com/biocross/Librarian) - The Command Line tool, written in NodeJS (this repository).
+- [Librarian Web](https://github.com/biocross/Librarian-Web) - The Web Interface of Librarian, built in Jekyll.
+
 
 ## Maintainers
 
