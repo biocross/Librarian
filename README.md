@@ -45,7 +45,7 @@ Submit builds to Librarian using:
 ```console
 $ librarian submit <pathToFile> [options]
 ```
-The `pathToFile` must be te full path to the `IPA` or `APK` file. Example: `/Users/jenkins/MyApp.ipa`, and should be accessible by Librarian.
+The `pathToFile` must be the full path to the `IPA` or `APK` file. Example: `/Users/jenkins/MyApp.ipa`, and should be accessible by Librarian.
 
 You can pass in the following additional options along with the path of the build file.
 
@@ -57,11 +57,22 @@ Option | Short | Example | Description
 
 Librarian will autodetect the type of build `iOS / Android` using the file extension, will create a copy of the build in it's assets, and make it available for download on it's web interface.
 
+> The Librarian server should be running while submitting a build.
+\
+\
+
+## Updating Librarian
+
+Librarian follows [semantic versioning](https://semver.org/). You can update by running:
+
+```console
+$ npm i -g librarian
+$ librarian update
+```
 
 ## Maintainers
 
 Developed by [biocross](https://twitter.com/sids7) & designed by [madebytushar](https://twitter.com/madebytushar)
-
 
 ## License
 
