@@ -1,6 +1,6 @@
 
 <div align="center">
-<img width="500" src="https://raw.githubusercontent.com/biocross/Librarian-Web/master/assets/LogoText_medium.png" alt="Librarian"><br/>
+<img width="500" src="https://raw.githubusercontent.com/biocross/Librarian-Web/master/assets/LogoText_medium.png" alt="Librarian"><br/><br/>
 </div>
 
 
