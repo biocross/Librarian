@@ -23,7 +23,7 @@
 $ npm install -g librarian
 $ librarian setup
 ```
-The setup will ask you a few questions to configure Librarian on your system. You can just press return through out the process to choose the default values.
+The setup will ask you a few questions to configure Librarian on your system. You can just press return throughout the process to choose the default values.
 
 ## Usage
 
@@ -36,7 +36,7 @@ $ librarian start
 ```
 This will start the web interface, and will print the URL to it on the console, along with a QR code to the URL for quick access 😁
 
-Librarian uses [ngrok](https://ngrok.com/product) tunneling to serve your localhost over the Internet using a secure `HTTPS` tunnel.
+> Librarian uses [ngrok](https://ngrok.com/product) tunneling to serve your localhost over the Internet using a secure `HTTPS` tunnel.
 
 ### Submitting Builds
 
