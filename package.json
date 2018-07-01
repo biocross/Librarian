@@ -1,7 +1,7 @@
 {
   "name": "librarian",
   "version": "1.0.0",
-  "description": "Easily Host your iOS & Android test builds onsite, cause local is best!",
+  "description": "Librarian is a local server for your iOS & Android builds, cause local is best!",
   "homepage": "https://github.com/biocross/Librarian",
   "repository": "https://github.com/biocross/Librarian",
   "main": "librarian.js",
