@@ -7,7 +7,7 @@ const git = require('simple-git/promise');
 const home = os.homedir();
 
 const configurationKey = 'librarian_config';
-const librarianWebRepo = 'https://github.com/biocross/Librarian-Template.git';
+const librarianWebRepo = 'https://github.com/biocross/Librarian-Web.git';
 
 const existingConfigurationConfirmation = [
   {
@@ -40,7 +40,7 @@ const setupQuestions = [
   {
     type: 'confirm',
     name: 'existing_token',
-    message: 'Do you already have an ngRok token? Press n if you\'re unsure (Why: )',
+    message: 'Do you want to you use a custom ngrok token? Press n if you\'re unsure (Why: github.com/biocross/Librarian/wiki/Custom-ngrok-Tokens)',
     default: false
   },
   {

@@ -1,10 +1,7 @@
 /*jshint esversion: 6 */
-const { prompt } = require('inquirer');
-const chalk = require('chalk');
-const os = require('os');
+const { configurationKey } = require('./setup.js');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
-const { configurationKey } = require('./setup.js');
 const webConfigurationPath = 'web/_data/config.json';
 const buildsDataPath = 'web/_builds/';
 
