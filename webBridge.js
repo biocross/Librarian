@@ -23,12 +23,12 @@ const addBuild = async (preferences, build) => {
         const webConfigPath = prefs.working_directory + webConfigurationPath;
         const webConfiguration = JSON.parse(fs.readFileSync(webConfigPath, 'utf8'));
         const buildPath = prefs.working_directory + buildsDataPath + build.folderPath + '.md';
+        const contents = `---\nlayout: build\n${yaml.safeDump(build)}---\n`;
+        fs.writeFileSync(buildPath, contents);
 
         if (!webConfiguration.initialized) {
             await setWebConfiguration(preferences, { "initialized": true });
-        }
-        const contents = `---\nlayout: build\n${yaml.safeDump(build)}---\n`;
-        fs.writeFileSync(buildPath, contents);
+        }        
     } catch (error) {
         console.log(error);
     }

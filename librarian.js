@@ -227,6 +227,7 @@ program
     buildInfo.platform = platform;
 
     await addBuild(preferences, buildInfo);
+    printHeader("Build Added Successfully!")
     await checkForUpdate(preferences);
     process.exit(0);
   });
