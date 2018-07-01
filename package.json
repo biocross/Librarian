@@ -26,7 +26,7 @@
   "dependencies": {
     "app-metadata": "^0.1.26",
     "chalk": "^2.4.1",
-    "commander": "^2.15.1",
+    "commander": "^2.16.0",
     "fs-extra": "^6.0.1",
     "inquirer": "^6.0.0",
     "js-yaml": "^3.12.0",
