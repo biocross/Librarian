@@ -20,7 +20,7 @@
 ## Install
 
 ```console
-$ npm install -g librarian
+$ npm install -g librarian-server
 $ librarian setup
 ```
 The setup will ask you a few questions to configure Librarian on your system. You can just press return throughout the process to choose the default values.

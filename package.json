@@ -1,5 +1,5 @@
 {
-  "name": "librarian",
+  "name": "librarian-server",
   "version": "1.0.0",
   "description": "Librarian is a local server for your iOS & Android builds, cause local is best!",
   "homepage": "https://github.com/biocross/Librarian",
