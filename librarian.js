@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*jshint esversion: 6 */
 const program = require('commander');
 const ngrok = require('ngrok');
@@ -26,7 +27,7 @@ const JEYLL_FRONT_MATTER_CHARACTER = "---\n---\n\n";
 
 program
   .version('1.0.0')
-  .description('Easily Host your iOS test builds onsite, cause local is best!');
+  .description('Librarian is a local server for your iOS & Android builds, cause local is best!')
 
 program
   .command('setup')
@@ -91,12 +92,12 @@ program
     let tunnelURL;
 
     try {
-      if(prefs.ngrok_token && prefs.ngrok_token !== "") {
+      if (prefs.ngrok_token && prefs.ngrok_token !== "") {
         tunnelURL = await ngrok.connect({ authtoken: prefs.ngrok_token, addr: webPort });
       } else {
         tunnelURL = await ngrok.connect({ addr: webPort });
       }
-    } catch(error) {
+    } catch (error) {
       log(JSON.stringify(error));
       fatalError("\nFailed to start the ngrok tunnel.\nPlease make sure your ngRok token is valid.");
     }
@@ -267,7 +268,7 @@ const fatalError = (message) => {
 
 program.parse(process.argv);
 
-process.on('SIGINT', async function() {
+process.on('SIGINT', async function () {
   log("\nExiting...")
   await preferences.init(storageOptions);
   const prefs = await preferences.getItem(configurationKey);

@@ -5,6 +5,9 @@
   "homepage": "https://github.com/biocross/Librarian",
   "repository": "https://github.com/biocross/Librarian",
   "main": "librarian.js",
+  "bin": {
+    "librarian": "./librarian.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
