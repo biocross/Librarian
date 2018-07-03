@@ -2,9 +2,11 @@
 const { prompt } = require('inquirer');
 const chalk = require('chalk');
 const os = require('os');
+const log = console.log;
 const fs = require('fs-extra');
 const git = require('simple-git/promise');
 const home = os.homedir();
+const { spawn } = require('child_process');
 
 const configurationKey = 'librarian_config';
 const librarianWebRepo = 'https://github.com/biocross/Librarian-Web.git';
@@ -54,10 +56,10 @@ const setupQuestions = [
 const beginSetup = async (preferences) => {
   const configuration = await prompt(setupQuestions);
 
-  if(configuration.local_ip.indexOf('http') == -1) {
+  if (configuration.local_ip.indexOf('http') == -1) {
     configuration.local_ip = 'http://' + configuration.local_ip + ':' + configuration.jekyll_port;
   }
-  
+
   console.log(chalk.green('\nUsing Configuration: \n'));
   console.log(configuration);
 
@@ -65,6 +67,28 @@ const beginSetup = async (preferences) => {
   const localPath = `${configuration.working_directory}/web`;
   await git(configuration.working_directory).clone(librarianWebRepo, localPath, ['--depth', 1]);
   console.log(chalk.green('Cloning Complete!'));
+
+  console.log(chalk.green('\nInstalling required ruby gems...'));
+  const bundler = spawn('bundle install', {
+    shell: true,
+    cwd: localPath
+  });
+
+  bundler.stdout.on('data', (data) => {
+    if (String(data).indexOf('Bundle complete') > -1) {
+      log(chalk.green('Installation Complete!'));
+      log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
+    }
+    if (String(data).toLowerCase().indexOf('error') > -1) {
+      log(String(data));
+    }
+  });
+
+  bundler.on('exit', function (code, signal) {
+    if (code == 127) {
+      fatalError('Librarian requires bundler to work. Please install bundler by running ' + chalk.bold.yellow('gem install bundler') + ' and run librarian setup again.')
+    }
+  });
 
   await preferences.setItem(configurationKey, configuration);
 }
@@ -84,6 +108,11 @@ const isSetup = async (preferences) => {
 const shouldOverwriteConfiguration = async () => {
   const answer = await prompt(existingConfigurationConfirmation);
   return answer.existing_configuration == true;
+};
+
+const fatalError = (message) => {
+  log(chalk.red.bold('🚨 Error: ' + message + ' 🚨'));
+  process.exit(1);
 };
 
 module.exports = { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey };

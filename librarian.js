@@ -48,7 +48,6 @@ program
     }
 
     await checkForUpdate(preferences);
-    log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
   });
 
 program
@@ -67,7 +66,7 @@ program
     const prefs = await preferences.getItem(configurationKey);
     const webPath = prefs.working_directory + 'web';
     const webPort = prefs.jekyll_port;
-    const webCommand = `JEKYLL_ENV=production jekyll serve --port ${webPort}`;
+    const webCommand = `JEKYLL_ENV=production bundle exec jekyll serve --port ${webPort}`;
 
     // Start the Jekyll Web Server
     const jekyll = spawn(webCommand, {
@@ -76,7 +75,7 @@ program
     });
 
     jekyll.stdout.on('data', (data) => {
-      if (data.indexOf('Server address:') > -1) {
+      if (String(data).indexOf('Server address:') > -1) {
         log('Jekyll Server Started');
       }
       if (String(data).toLowerCase().indexOf('error') > -1) {
