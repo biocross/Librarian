@@ -172,18 +172,19 @@ program
 
       try {
         fs.copySync(templatePath, localManifestPath);
-        fs.copySync(templatePath, webManifestPath);
         fs.copySync(pathToFile, ipaPath);
-
-        let manifest = fs.readFileSync(localManifestPath, 'utf8');
+        const manifest = fs.readFileSync(localManifestPath, 'utf8');
         let editablePlist = plist.parse(manifest);
         editablePlist.items[0].metadata["bundle-version"] = version;
         editablePlist.items[0].metadata["bundle-identifier"] = bundleIdentifier;
         editablePlist.items[0].metadata["title"] = appName;
         editablePlist.items[0].assets[0].url = '{{site.data.config.localBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
         fs.writeFileSync(localManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
-        editablePlist.items[0].assets[0].url = '{{site.data.config.webBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
-        fs.writeFileSync(webManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
+        if (options.public) {
+          fs.copySync(templatePath, webManifestPath);
+          editablePlist.items[0].assets[0].url = '{{site.data.config.webBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
+          fs.writeFileSync(webManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
+        }
       } catch (error) {
         fatalError(error);
       }
