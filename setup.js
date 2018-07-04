@@ -69,7 +69,7 @@ const beginSetup = async (preferences) => {
   console.log(chalk.green('Cloning Complete!'));
 
   console.log(chalk.green('\nInstalling required ruby gems...'));
-  const bundler = spawn('bundle install', {
+  const bundler = spawn('bundle install --path ./localgems', {
     shell: true,
     cwd: localPath
   });

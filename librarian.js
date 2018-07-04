@@ -26,7 +26,7 @@ const storageOptions = {
 const JEYLL_FRONT_MATTER_CHARACTER = "---\n---\n\n";
 
 program
-  .version('1.0.0')
+  .version(pkg.version)
   .description('Librarian is a local server for your iOS & Android builds, cause local is best!')
 
 program
