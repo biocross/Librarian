@@ -91,11 +91,18 @@ program
     let tunnelURL;
 
     try {
+      let options = { addr: webPort, region: 'ap' };
+
       if (prefs.ngrok_token && prefs.ngrok_token !== "") {
-        tunnelURL = await ngrok.connect({ authtoken: prefs.ngrok_token, addr: webPort });
-      } else {
-        tunnelURL = await ngrok.connect({ addr: webPort });
+        options.authtoken = prefs.ngrok_token;
       }
+
+      if (prefs.private_web) {
+        options.auth = `${prefs.web_username}:${prefs.web_password}`
+      }
+
+      tunnelURL = await ngrok.connect(options);
+
     } catch (error) {
       log(JSON.stringify(error));
       fatalError("\nFailed to start the ngrok tunnel.\nPlease make sure your ngRok token is valid.");
