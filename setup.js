@@ -34,10 +34,22 @@ const setupQuestions = [
     default: os.networkInterfaces().en0.find(elm => elm.family == 'IPv4').address
   },
   {
+    type: 'confirm',
+    name: 'private_web',
+    message: 'Should Librarian\'s web interface be accessible over the internet?'
+  },
+  {
     type: 'input',
     name: 'jekyll_port',
     message: 'Which port should the Librarian Website run at? (Default: 5000)',
     default: '5000'
+  },
+  {
+    type: 'input',
+    name: 'assets_port',
+    message: 'Which port should the Librarian Assets Server run at? (Default: 5001)',
+    default: '5001',
+    when: (answers) => { return answers.private_web === false; }
   },
   {
     type: 'confirm',
@@ -58,6 +70,7 @@ const beginSetup = async (preferences) => {
 
   if (configuration.local_ip.indexOf('http') == -1) {
     configuration.local_ip = 'http://' + configuration.local_ip + ':' + configuration.jekyll_port;
+    configuration.private_web = !configuration.private_web;
   }
 
   console.log(chalk.green('\nUsing Configuration: \n'));
@@ -65,8 +78,15 @@ const beginSetup = async (preferences) => {
 
   console.log(chalk.green('\nCloning the Librarian WebServer...'));
   const localPath = `${configuration.working_directory}/web`;
+  const assetServerPath = `${configuration.working_directory}/asset_server`;
   await git(configuration.working_directory).clone(librarianWebRepo, localPath, ['--depth', 1]);
   console.log(chalk.green('Cloning Complete!'));
+
+  if (configuration.private_web) {
+    console.log(chalk.green('\nCloning the Librarian Assets Server...'));
+    await git(configuration.working_directory).clone(librarianWebRepo, assetServerPath, ['--depth', 1, '-b', 'asset_server']);
+    console.log(chalk.green('Cloning Complete!'));
+  }
 
   console.log(chalk.green('\nInstalling required ruby gems...'));
   const bundler = spawn('bundle install --path ./localgems', {
@@ -76,8 +96,24 @@ const beginSetup = async (preferences) => {
 
   bundler.stdout.on('data', (data) => {
     if (String(data).indexOf('Bundle complete') > -1) {
-      log(chalk.green('Installation Complete!'));
-      log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
+      if (configuration.private_web) {
+        const assets_bundler = spawn('bundle install --path ./localgems', {
+          shell: true,
+          cwd: assetServerPath
+        });
+        assets_bundler.stdout.on('data', (data) => {
+          if (String(data).indexOf('Bundle complete') > -1) {
+            log(chalk.green('Installation Complete!'));
+            log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
+          }
+          if (String(data).toLowerCase().indexOf('error') > -1) {
+            log(String(data));
+          }
+        });
+      } else {
+        log(chalk.green('Installation Complete!'));
+        log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
+      }
     }
     if (String(data).toLowerCase().indexOf('error') > -1) {
       log(String(data));
@@ -97,6 +133,7 @@ const purgeExistingInstallation = async (preferences) => {
   const prefs = await preferences.getItem(configurationKey);
   console.log("Purging the Existing Installation at: " + prefs.working_directory);
   await fs.emptyDir(prefs.working_directory);
+  await fs.removeSync(prefs.working_directory)
   console.log("Purge Complete!\n");
 }
 
