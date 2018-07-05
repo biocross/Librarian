@@ -69,12 +69,12 @@ program
     const webCommand = `JEKYLL_ENV=production bundle exec jekyll serve --port ${webPort}`;
 
     // Start the Jekyll Web Server
-    const jekyll = spawn(webCommand, {
+    const web = spawn(webCommand, {
       shell: true,
       cwd: webPath
     });
 
-    jekyll.stdout.on('data', (data) => {
+    web.stdout.on('data', (data) => {
       if (String(data).indexOf('Server address:') > -1) {
         log('Jekyll Server Started');
       }
@@ -83,18 +83,43 @@ program
       }
     });
 
-    jekyll.on('exit', function (code, signal) {
+    web.on('exit', function (code, signal) {
       fatalError('The Jekyll Server has quit unexpectedly. Librarian is now exiting.');
     });
+
+    if (prefs.private_web) {
+      const assetsPath = prefs.working_directory + 'asset_server';
+      const assetsPort = prefs.assets_port;
+      const webCommand = `JEKYLL_ENV=production bundle exec jekyll serve --port ${assetsPort}`;
+
+      const asset_server = spawn(webCommand, {
+        shell: true,
+        cwd: assetsPath
+      });
+
+      asset_server.stdout.on('data', (data) => {
+        if (String(data).indexOf('Server address:') > -1) {
+          log('Assets Server Started');
+        }
+        if (String(data).toLowerCase().indexOf('error') > -1) {
+          log(String(data));
+        }
+      });
+
+      asset_server.on('exit', function (code, signal) {
+        fatalError('The Assets Server has quit unexpectedly. Librarian is now exiting.');
+      });
+    }
 
     // Start the ngrok tunnel to the webserver
     let tunnelURL;
 
     try {
+      const port = prefs.private_web ? prefs.assets_port : prefs.jekyll_port;
       if (prefs.ngrok_token && prefs.ngrok_token !== "") {
-        tunnelURL = await ngrok.connect({ authtoken: prefs.ngrok_token, addr: webPort });
+        tunnelURL = await ngrok.connect({ authtoken: prefs.ngrok_token, addr: port });
       } else {
-        tunnelURL = await ngrok.connect({ addr: webPort });
+        tunnelURL = await ngrok.connect({ addr: port });
       }
     } catch (error) {
       log(JSON.stringify(error));
