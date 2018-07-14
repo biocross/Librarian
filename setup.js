@@ -35,7 +35,7 @@ const setupQuestions = [
   },
   {
     type: 'confirm',
-    name: 'private_web',
+    name: 'assets_web',
     message: 'Should Librarian\'s web interface be accessible over the internet?'
   },
   {
@@ -49,7 +49,7 @@ const setupQuestions = [
     name: 'assets_port',
     message: 'Which port should the Librarian Assets Server run at? (Default: 5001)',
     default: '5001',
-    when: (answers) => { return answers.private_web === false; }
+    when: (answers) => { return answers.assets_web === false; }
   },
   {
     type: 'confirm',
@@ -74,13 +74,13 @@ const setupQuestions = [
     type: 'input',
     name: 'web_username',
     message: 'Please enter the username for the web interface:',
-    when: (answers) => { return answers.private_web === true; }
+    when: (answers) => { return answers.existing_token === true && answers.private_web === true; }
   },
   {
     type: 'input',
     name: 'web_password',
     message: 'Please enter the password for the web interface:',
-    when: (answers) => { return answers.private_web === true; }
+    when: (answers) => { return answers.existing_token === true && answers.private_web === true; }
   }
 ];
 
@@ -90,6 +90,7 @@ const beginSetup = async (preferences) => {
   if (configuration.local_ip.indexOf('http') == -1) {
     configuration.local_ip = 'http://' + configuration.local_ip + ':' + configuration.jekyll_port;
     configuration.private_web = !configuration.private_web;
+    configuration.assets_web = !configuration.assets_web;
   }
 
   console.log(chalk.green('\nUsing Configuration: \n'));

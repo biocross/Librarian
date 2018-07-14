@@ -87,7 +87,7 @@ program
       fatalError('The Jekyll Server has quit unexpectedly. Librarian is now exiting.');
     });
 
-    if (prefs.private_web) {
+    if (prefs.assets_web) {
       const assetsPath = prefs.working_directory + 'asset_server';
       const assetsPort = prefs.assets_port;
       const webCommand = `JEKYLL_ENV=production bundle exec jekyll serve --port ${assetsPort}`;
@@ -198,7 +198,7 @@ program
       const buildTime = new Date();
       const folderName = buildTime.getTime();
       const templatePath = prefs.working_directory + 'web/templates/manifest.plist';
-      const localManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/local/manifest.plist';
+      const localManifestPath = prefs.working_directory + (prefs.assets_web ? 'asset_server' : 'web') + '/assets/b/' + folderName + '/local/manifest.plist';
       const webManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/web/manifest.plist';
       const ipaPath = prefs.working_directory + 'web/assets/b/' + folderName + '/' + appName + '.ipa';
 
@@ -212,7 +212,7 @@ program
         editablePlist.items[0].metadata["title"] = appName;
         editablePlist.items[0].assets[0].url = '{{site.data.config.localBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
         fs.writeFileSync(localManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
-        if (options.public) {
+        if (options.public && !prefs.assets_web) {
           fs.copySync(templatePath, webManifestPath);
           editablePlist.items[0].assets[0].url = '{{site.data.config.webBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
           fs.writeFileSync(webManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
