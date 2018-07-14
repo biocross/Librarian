@@ -116,11 +116,18 @@ program
 
     try {
       const port = prefs.private_web ? prefs.assets_port : prefs.jekyll_port;
+      let options = { addr: port, region: 'ap' };
+
       if (prefs.ngrok_token && prefs.ngrok_token !== "") {
-        tunnelURL = await ngrok.connect({ authtoken: prefs.ngrok_token, addr: port });
-      } else {
-        tunnelURL = await ngrok.connect({ addr: port });
+        options.authtoken = prefs.ngrok_token;
       }
+
+      if (prefs.private_web) {
+        options.auth = `${prefs.web_username}:${prefs.web_password}`
+      }
+
+      tunnelURL = await ngrok.connect(options);
+
     } catch (error) {
       log(JSON.stringify(error));
       fatalError("\nFailed to start the ngrok tunnel.\nPlease make sure your ngRok token is valid.");

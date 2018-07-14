@@ -5,6 +5,8 @@
 
 
 > Librarian is an easy way to host your iOS & Android builds locally, and provide instant installs onsite.
+ 
+[![NPM Version](http://img.shields.io/npm/v/librarian-server.svg?style=flat)](https://www.npmjs.org/package/librarian-server)
 
 
 ## Highlights

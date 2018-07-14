@@ -54,7 +54,7 @@ const setupQuestions = [
   {
     type: 'confirm',
     name: 'existing_token',
-    message: 'Do you want to you use a custom ngrok token? Press n if you\'re unsure (Why: github.com/biocross/Librarian/wiki/Custom-ngrok-Tokens)',
+    message: 'Do you want to you use a custom ngrok token? [This is required if you want to password protect Librarian\'s web interface]\n\n Press n if you\'re unsure (Know More: github.com/biocross/Librarian/wiki/Custom-ngrok-Tokens) ',
     default: false
   },
   {
@@ -62,6 +62,25 @@ const setupQuestions = [
     name: 'ngrok_token',
     message: 'Please enter your ngRok token:',
     when: (answers) => { return answers.existing_token === true; }
+  },
+  {
+    type: 'confirm',
+    name: 'private_web',
+    message: 'Do you want Librarian\'s Website to be password protected (when accessed over the internet)?',
+    default: false,
+    when: (answers) => { return answers.existing_token === true; }
+  },
+  {
+    type: 'input',
+    name: 'web_username',
+    message: 'Please enter the username for the web interface:',
+    when: (answers) => { return answers.private_web === true; }
+  },
+  {
+    type: 'input',
+    name: 'web_password',
+    message: 'Please enter the password for the web interface:',
+    when: (answers) => { return answers.private_web === true; }
   }
 ];
 
