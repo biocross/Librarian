@@ -89,7 +89,6 @@ const beginSetup = async (preferences) => {
 
   if (configuration.local_ip.indexOf('http') == -1) {
     configuration.local_ip = 'http://' + configuration.local_ip + ':' + configuration.jekyll_port;
-    configuration.private_web = !configuration.private_web;
     configuration.assets_web = !configuration.assets_web;
   }
 
@@ -102,7 +101,7 @@ const beginSetup = async (preferences) => {
   await git(configuration.working_directory).clone(librarianWebRepo, localPath, ['--depth', 1]);
   console.log(chalk.green('Cloning Complete!'));
 
-  if (configuration.private_web) {
+  if (configuration.assets_web) {
     console.log(chalk.green('\nCloning the Librarian Assets Server...'));
     await git(configuration.working_directory).clone(librarianWebRepo, assetServerPath, ['--depth', 1, '-b', 'asset_server']);
     console.log(chalk.green('Cloning Complete!'));
@@ -116,7 +115,7 @@ const beginSetup = async (preferences) => {
 
   bundler.stdout.on('data', (data) => {
     if (String(data).indexOf('Bundle complete') > -1) {
-      if (configuration.private_web) {
+      if (configuration.assets_web) {
         const assets_bundler = spawn('bundle install --path ./localgems', {
           shell: true,
           cwd: assetServerPath

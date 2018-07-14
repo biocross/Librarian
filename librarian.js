@@ -115,7 +115,7 @@ program
     let tunnelURL;
 
     try {
-      const port = prefs.private_web ? prefs.assets_port : prefs.jekyll_port;
+      const port = prefs.assets_web ? prefs.assets_port : prefs.jekyll_port;
       let options = { addr: port, region: 'ap' };
 
       if (prefs.ngrok_token && prefs.ngrok_token !== "") {
