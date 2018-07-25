@@ -140,17 +140,19 @@ program
     prefs.currentURL = tunnelURL;
     await preferences.setItem(configurationKey, prefs);
 
-    log('\nLibrarian is up at: ');
-    log(chalk.yellow.bold(tunnelURL));
-
     let webConfiguration = {
       "webBaseURL": prefs.currentURL,
       "localBaseURL": prefs.local_ip
     };
     await setWebConfiguration(preferences, webConfiguration);
 
+    const webURL = prefs.assets_web ? prefs.local_ip : tunnelURL;
+
+    log('\nLibrarian is up at: ');
+    log(chalk.yellow.bold(webURL));
+
     log('\nScan the QR code to jump to Librarian\'s web interface:');
-    qrcode.generate(tunnelURL);
+    qrcode.generate(webURL);
 
     await checkForUpdate(preferences);
   });
