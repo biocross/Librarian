@@ -69,12 +69,12 @@ program
     const webCommand = `JEKYLL_ENV=production bundle exec jekyll serve --port ${webPort}`;
 
     // Start the Jekyll Web Server
-    const jekyll = spawn(webCommand, {
+    const web = spawn(webCommand, {
       shell: true,
       cwd: webPath
     });
 
-    jekyll.stdout.on('data', (data) => {
+    web.stdout.on('data', (data) => {
       if (String(data).indexOf('Server address:') > -1) {
         log('Jekyll Server Started');
       }
@@ -83,15 +83,40 @@ program
       }
     });
 
-    jekyll.on('exit', function (code, signal) {
+    web.on('exit', function (code, signal) {
       fatalError('The Jekyll Server has quit unexpectedly. Librarian is now exiting.');
     });
+
+    if (prefs.assets_web) {
+      const assetsPath = prefs.working_directory + 'asset_server';
+      const assetsPort = prefs.assets_port;
+      const webCommand = `JEKYLL_ENV=production bundle exec jekyll serve --port ${assetsPort}`;
+
+      const asset_server = spawn(webCommand, {
+        shell: true,
+        cwd: assetsPath
+      });
+
+      asset_server.stdout.on('data', (data) => {
+        if (String(data).indexOf('Server address:') > -1) {
+          log('Assets Server Started');
+        }
+        if (String(data).toLowerCase().indexOf('error') > -1) {
+          log(String(data));
+        }
+      });
+
+      asset_server.on('exit', function (code, signal) {
+        fatalError('The Assets Server has quit unexpectedly. Librarian is now exiting.');
+      });
+    }
 
     // Start the ngrok tunnel to the webserver
     let tunnelURL;
 
     try {
-      let options = { addr: webPort, region: 'ap' };
+      const port = prefs.assets_web ? prefs.assets_port : prefs.jekyll_port;
+      let options = { addr: port, region: 'ap' };
 
       if (prefs.ngrok_token && prefs.ngrok_token !== "") {
         options.authtoken = prefs.ngrok_token;
@@ -173,7 +198,7 @@ program
       const buildTime = new Date();
       const folderName = buildTime.getTime();
       const templatePath = prefs.working_directory + 'web/templates/manifest.plist';
-      const localManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/local/manifest.plist';
+      const localManifestPath = prefs.working_directory + (prefs.assets_web ? 'asset_server' : 'web') + '/assets/b/' + folderName + '/local/manifest.plist';
       const webManifestPath = prefs.working_directory + 'web/assets/b/' + folderName + '/web/manifest.plist';
       const ipaPath = prefs.working_directory + 'web/assets/b/' + folderName + '/' + appName + '.ipa';
 
@@ -187,7 +212,7 @@ program
         editablePlist.items[0].metadata["title"] = appName;
         editablePlist.items[0].assets[0].url = '{{site.data.config.localBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
         fs.writeFileSync(localManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
-        if (options.public) {
+        if (options.public && !prefs.assets_web) {
           fs.copySync(templatePath, webManifestPath);
           editablePlist.items[0].assets[0].url = '{{site.data.config.webBaseURL}}/assets/b/' + folderName + '/' + appName + '.ipa';
           fs.writeFileSync(webManifestPath, JEYLL_FRONT_MATTER_CHARACTER + plist.build(editablePlist));
