@@ -22,9 +22,11 @@
 ## Install
 
 ```console
-$ npm install -g librarian-server
+$ sudo npm i -g librarian-server
 $ librarian setup
 ```
+> If you can get an `EACCESS` / Permissions error while while running `npm i -g librarian-server`, just run `sudo npm link librarian-server`, before running `librarian setup`. 
+
 The setup will ask you a few questions to configure Librarian on your system. You can just press return throughout the process to choose the default values.
 
 ## Usage
@@ -66,7 +68,7 @@ Librarian will autodetect the type of build `iOS / Android` using the file exten
 Librarian follows [semantic versioning](https://semver.org/). You can update by running:
 
 ```console
-$ npm i -g librarian
+$ npm i -g librarian-server
 $ librarian update
 ```
 
