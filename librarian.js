@@ -138,6 +138,12 @@ program
     }
 
     prefs.currentURL = tunnelURL;
+
+    const currentIP = os.networkInterfaces().en0.find(elm => elm.family == 'IPv4').address;
+    if (currentIP !== prefs.local_ip) {
+      prefs.local_ip = 'http://' + currentIP + ':' + prefs.jekyll_port;
+    }
+
     await preferences.setItem(configurationKey, prefs);
 
     let webConfiguration = {
