@@ -12,6 +12,8 @@ const log = console.log;
 const home = os.homedir();
 const updateNotifier = require('update-notifier');
 const pkg = require('./package.json');
+const gitP = require('simple-git/promise');
+const git = gitP();
 const { Extract } = require('app-metadata');
 const { spawn } = require('child_process');
 const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey } = require('./setup.js');
@@ -272,6 +274,82 @@ program
     await checkForUpdate(preferences);
     process.exit(0);
   });
+
+program
+  .command('update')
+  .alias('s')
+  .description('Update Librarian to be the latest and greatest!')
+  .action(async () => {
+    printHeader('Updating Librarian...');
+    await preferences.init(storageOptions);
+    const configuration = await preferences.getItem(configurationKey);
+
+    const localPath = `${configuration.working_directory}web`;
+    const assetServerPath = `${configuration.working_directory}/asset_server`;
+
+    try {
+      await updateServer(localPath);
+      if (configuration.assets_web) {
+        await updateServer(assetServerPath);
+      }
+      log(chalk.bold("Update Complete!"));
+      log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
+    } catch (error) {
+      log(error);
+      log("Failed to update");
+    }
+  });
+
+const updateServer = async (path) => {
+  return new Promise(async (resolve, reject) => {
+    git.cwd(path).then(() => git.add('./*')).then(() => git.commit(`Snapshot before Librarian Update at ${new Date()}`)).then(() => {
+      console.log(`Updating Librarian Web Server at ${path}...`)
+      git.pull((err, update) => {
+        if (update && update.summary.changes) {
+          console.log(update.summary.changes);
+        }
+      }).then(async () => {
+        try {
+          console.log(`Updating bundle for ${path}`);
+          await installBundle(path);
+          resolve(true);
+        } catch (error) {
+          reject(error);
+        }
+      })
+    });
+  })
+}
+
+const installBundle = async (path) => {
+  return new Promise(async (resolve, reject) => {
+    const bundler = spawn('bundle install --path ./localgems', {
+      shell: true,
+      cwd: path
+    });
+
+    bundler.stdout.on('data', (data) => {
+      if (String(data).toLowerCase().indexOf('error') > -1) {
+        log(String(data));
+      }
+    });
+
+    bundler.on('exit', function (code, signal) {
+      if (code === 0) {
+        log(chalk.green('Bundle Installation Complete!'));
+        resolve(true);
+        return;
+      }
+
+      if (code == 127) {
+        console.log('Librarian requires bundler to work. Please install bundler by running ' + chalk.bold.yellow('gem install bundler') + ' and run librarian setup again.');
+        reject(false);
+      } else {
+        reject(false)
+      }
+    });
+  });
+}
 
 const checkForUpdate = async (preferences) => {
   const notifier = updateNotifier({ pkg });
