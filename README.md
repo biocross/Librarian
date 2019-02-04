@@ -4,7 +4,7 @@
 </div>
 
 
-> Librarian is an easy way to serve your iOS & Android builds on your local network, and make dogfeeding and testing development versions of your app effortless.
+> Librarian is an easy way to serve your iOS & Android builds on your local network, and make dogfooding and testing development versions of your app effortless.
  
 [![NPM Version](http://img.shields.io/npm/v/librarian-server.svg?style=flat)](https://www.npmjs.org/package/librarian-server)
 
