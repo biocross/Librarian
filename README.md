@@ -8,7 +8,7 @@
  
 [![NPM Version](http://img.shields.io/npm/v/librarian-server.svg?style=flat)](https://www.npmjs.org/package/librarian-server)
 
-<img width="250" src="https://j.gifs.com/p8wOZy.gif" alt="Librarian on iOS"><br/><br/>
+<img width="250" src="https://raw.githubusercontent.com/biocross/librarian/master/demo.gif" alt="Librarian on iOS"><br/><br/>
 
 ## Highlights
 
