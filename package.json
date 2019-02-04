@@ -1,6 +1,6 @@
 {
   "name": "librarian-server",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Librarian is a local server for your iOS & Android builds, cause local is best!",
   "homepage": "https://github.com/biocross/Librarian",
   "repository": "https://github.com/biocross/Librarian",
@@ -11,6 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": ["librarian.js", "setup.js", "webBridge.js"],
   "keywords": [
     "cli-app",
     "local",
