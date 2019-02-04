@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class=><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Librarian – Easily host your iOS and Android builds locally!</title>
+    
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Librarian is an easy way to serve your iOS & Android builds on your local network, and make dogfeeding and testing development versions of your app effortless.">
+    <meta property="og:image" content="./LibrarianOGImage.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="./apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="./android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="./favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="./ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link href="./css" rel="stylesheet">
+
+    <link rel="stylesheet" href="./AllTemplates.min.css">
+
+    <style>
+      .launchaco-promo {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        cursor: pointer;
+        width: 0;
+        height: 0;
+        z-index: 999999;
+      }
+
+      .launchaco-promo__active {
+        width: initial;
+        height: initial;
+      }
+
+      .launchaco-promo-speechbubble {
+        font-family: -apple-system, BlinkMacSystemFont, Roboto, "Open Sans", "Helvetica Neue", sans-serif;
+        position: absolute;
+        left: 50px;
+        top: -11px;
+        padding: 9px;
+        color: white;
+        border-radius: 3px;
+        background: linear-gradient(#227ef7, #1290fc);
+        font-size: 14px;
+        font-weight: 600;
+        width: 93px;
+        box-sizing: border-box;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .15s ease-in-out;
+      }
+
+      .launchaco-promo__active:hover .launchaco-promo-speechbubble {
+        opacity: 1;
+      }
+
+      .launchaco-promo svg {
+        transition: all .3s ease-in-out;
+        opacity: 0;
+      }
+
+      .launchaco-promo__active svg {
+        opacity: 1;
+      }
+
+      .launchaco-promo-speechbubble:before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        transform: rotate(45deg);
+        left: -4px;
+        bottom: 10px;
+        border-radius: 3px;
+        background: #1290fc;
+        z-index: 2;
+        position: absolute
+      }
+
+      .launchaco-promo__active .launchaco-promo-speechbubble__animate {
+        animation: popinpopup 3s linear forwards 0.1s;
+      }
+
+      @keyframes popinpopup {
+        0% {
+          opacity: 0;
+          transform: translate3d(0, 3px, 0)
+        }
+
+        7%,
+        93% {
+          opacity: 1;
+          transform: translate3d(0, 0, 0)
+        }
+
+        100% {
+          opacity: 0;
+          transform: translate3d(0, -4px, 0)
+        }
+      }
+
+      .launchaco-promo-animate:hover {
+        opacity: 1 !important;
+      }
+    </style>
+
+
+    <style>
+
+    </style>
+  <style type="text/css">
+@font-face {
+  font-weight: 400;
+  font-style:  normal;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-weight: 400;
+  font-style:  italic;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-Italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-weight: 500;
+  font-style:  normal;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-weight: 500;
+  font-style:  italic;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-MediumItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-weight: 700;
+  font-style:  normal;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-weight: 700;
+  font-style:  italic;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-BoldItalic.woff2') format('woff2');
+}
+
+@font-face {
+  font-weight: 900;
+  font-style:  normal;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-Black.woff2') format('woff2');
+}
+@font-face {
+  font-weight: 900;
+  font-style:  italic;
+  font-family: 'Inter-Loom';
+
+  src: url('https://cdn.useloom.com/assets/fonts/inter/Inter-UI-BlackItalic.woff2') format('woff2');
+}</style></head>
+
+  <body class="font-hacker" data-gr-c-s-loaded="true">
+    <div class="gray-gradient">
+      <header class="header">
+        <div class="container-lrg">
+          <div class="flex col-12 spread"><a href="/" class="logo launchaco-builder-hoverable logo"><img src="./adaf322b-9ca8-48cc-ac15-9c63009da3fe.png" alt="LibrarianCompany Logo"></a> <a href="#main-menu" id="menu" class="menu-toggle"><b class="nav-link mr0 secondary-color">☰</b></a>
+            <nav id="main-menu" role="navigation" class="main-menu"><a href="#" id="main-menu-close" class="menu-close"><span class="bold">✕</span></a>
+              <a href="https://github.com/biocross/Librarian" class="nav-link secondary-color">GitHub</a>
+            </nav>
+          </div>
+        </div>
+      </header>
+      <section class="section">
+        <div class="container-lrg flex">
+          <div class="flex flex-column col-6 center-vertical mobile-text-center mb40">
+            <h1 class="heading primary-color launchaco-builder-hoverable">Managing app builds has never been easier.</h1>
+            <h2 class="subheading secondary-color mt20 launchaco-builder-hoverable">Serve iOS & Android Builds on your local network, make dogfooding effortless.</h2>
+            <div class="mt40"><a href="https://github.com/biocross/Librarian" target="_blank" class="button mobile-text-center mt10 launchaco-builder-hoverable mobile-text-center accent-bg fill-white primary-color"><svg width="25" height="24" viewBox="0 0 25 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22.889 6.13a12.214 12.214 0 0 0-4.465-4.464C16.544.569 14.493.02 12.267.02S7.989.57 6.11 1.666A12.212 12.212 0 0 0 1.645 6.13C.548 8.01 0 10.062 0 12.287c0 2.673.78 5.077 2.34 7.212 1.56 2.135 3.575 3.612 6.045 4.432.288.053.5.016.64-.112a.625.625 0 0 0 .207-.479l-.008-.862c-.006-.544-.008-1.017-.008-1.422l-.368.064c-.234.043-.53.061-.886.056a6.754 6.754 0 0 1-1.11-.112 2.48 2.48 0 0 1-1.07-.479 2.027 2.027 0 0 1-.703-.982l-.16-.368a3.991 3.991 0 0 0-.503-.814c-.229-.298-.46-.5-.695-.607l-.111-.08a1.173 1.173 0 0 1-.208-.192.876.876 0 0 1-.144-.223c-.032-.075-.005-.136.08-.184.085-.048.24-.072.463-.072l.32.048c.213.043.476.17.79.383.314.213.573.49.775.83.245.437.54.77.886.999.346.229.695.343 1.047.343.35 0 .654-.026.91-.08.255-.053.495-.133.719-.24.096-.713.356-1.261.782-1.644a10.937 10.937 0 0 1-1.637-.288 6.519 6.519 0 0 1-1.501-.623 4.3 4.3 0 0 1-1.286-1.07c-.34-.426-.62-.985-.838-1.677-.219-.693-.328-1.491-.328-2.396 0-1.289.42-2.385 1.262-3.29-.394-.97-.357-2.056.112-3.259.309-.096.767-.024 1.373.216.607.24 1.052.445 1.334.615.282.17.509.314.68.431.99-.277 2.012-.415 3.066-.415 1.054 0 2.076.138 3.067.415l.607-.383c.415-.256.905-.49 1.469-.703.564-.213.996-.272 1.294-.176.48 1.204.522 2.29.128 3.259.84.905 1.262 2.002 1.262 3.29 0 .905-.11 1.706-.328 2.404-.218.697-.5 1.256-.846 1.677-.346.42-.778.775-1.294 1.062a6.531 6.531 0 0 1-1.501.623c-.485.128-1.03.224-1.638.288.554.479.83 1.235.83 2.268v3.37c0 .191.067.351.2.479.134.127.344.165.631.111 2.471-.82 4.486-2.297 6.046-4.432 1.56-2.135 2.34-4.538 2.34-7.211 0-2.225-.55-4.278-1.645-6.157z"></path>
+                </svg> <span> Get Started </span></a></div>
+          </div>
+          <div class="col-6 flex center-vertical">
+            <div class="iphoneandroid noshrink launchaco-builder-hoverable">
+              <div class="iphoneandroid-android">
+                <div class="mask"><img src="./93f4cef4-6746-4c2b-b623-9eb31fd86c16.png" alt="Screenshot of Android App" class="mask-img"></div>
+              </div>
+              <div class="iphoneandroid-iphone">
+                <div class="mask"><img src="./e48ae75b-2c22-4673-9a70-fec50cfcbf6c.png" alt="Screenshot of iPhone App" class="mask-img"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <section id="checklist-1" class="section gray-white" sitemeta="[object Object]" activepage="Landing">
+      <div class="container-lrg flex">
+        <div class="col-6 flex flex-column center-vertical">
+          <h3 class="heading primary-color launchaco-builder-hoverable">Quick Setup</h3>
+          <p class="subheading secondary-color mt20 launchaco-builder-hoverable">Open Terminal and run:</p>
+          <ul class="checklist mt20">
+            <li class="checklist-item flex center-horizontal spread pad10 pr0 pl0 launchaco-builder-hoverable">
+              <p class="span primary-color mr20">npm i -g librarian-server</p> <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="noshrink svg-fill">
+                <g transform="translate(4.000000, 5.000000)">
+                  <path d="M5.24961475,8.39956394 L2.16512063,5.35475362 C1.74038521,4.93548271 1.05017933,4.9352057 0.624646383,5.35526395 C0.199019838,5.77541456 0.198881924,6.45614266 0.624129379,6.8759191 L4.35212111,10.555948 C4.38658274,10.6034965 4.42544251,10.6488955 4.46870038,10.6915969 C4.70907746,10.9288814 5.03375662,11.0320952 5.3475228,11.0013023 C5.59592563,10.9812599 5.83876209,10.8774981 6.02880771,10.6898975 C6.06831079,10.6509027 6.10414872,10.6096632 6.13632157,10.5665961 L13.9850992,2.81879759 C14.4107939,2.39857976 14.410861,1.71746456 13.985328,1.29740632 C13.5597015,0.8772557 12.8697673,0.877449143 12.444108,1.29763217 L5.24961475,8.39956394 Z"></path>
+                </g>
+              </svg>
+            </li>
+            <li class="checklist-item flex center-horizontal spread pad10 pr0 pl0 launchaco-builder-hoverable">
+              <p class="span primary-color mr20">librarian setup</p> <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="noshrink svg-fill">
+                <g transform="translate(4.000000, 5.000000)">
+                  <path d="M5.24961475,8.39956394 L2.16512063,5.35475362 C1.74038521,4.93548271 1.05017933,4.9352057 0.624646383,5.35526395 C0.199019838,5.77541456 0.198881924,6.45614266 0.624129379,6.8759191 L4.35212111,10.555948 C4.38658274,10.6034965 4.42544251,10.6488955 4.46870038,10.6915969 C4.70907746,10.9288814 5.03375662,11.0320952 5.3475228,11.0013023 C5.59592563,10.9812599 5.83876209,10.8774981 6.02880771,10.6898975 C6.06831079,10.6509027 6.10414872,10.6096632 6.13632157,10.5665961 L13.9850992,2.81879759 C14.4107939,2.39857976 14.410861,1.71746456 13.985328,1.29740632 C13.5597015,0.8772557 12.8697673,0.877449143 12.444108,1.29763217 L5.24961475,8.39956394 Z"></path>
+                </g>
+              </svg>
+            </li>
+            <li class="checklist-item flex center-horizontal spread pad10 pr0 pl0 launchaco-builder-hoverable">
+              <p class="span primary-color mr20">librarian start</p> <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="noshrink svg-fill">
+                <g transform="translate(4.000000, 5.000000)">
+                  <path d="M5.24961475,8.39956394 L2.16512063,5.35475362 C1.74038521,4.93548271 1.05017933,4.9352057 0.624646383,5.35526395 C0.199019838,5.77541456 0.198881924,6.45614266 0.624129379,6.8759191 L4.35212111,10.555948 C4.38658274,10.6034965 4.42544251,10.6488955 4.46870038,10.6915969 C4.70907746,10.9288814 5.03375662,11.0320952 5.3475228,11.0013023 C5.59592563,10.9812599 5.83876209,10.8774981 6.02880771,10.6898975 C6.06831079,10.6509027 6.10414872,10.6096632 6.13632157,10.5665961 L13.9850992,2.81879759 C14.4107939,2.39857976 14.410861,1.71746456 13.985328,1.29740632 C13.5597015,0.8772557 12.8697673,0.877449143 12.444108,1.29763217 L5.24961475,8.39956394 Z"></path>
+                </g>
+              </svg>
+            </li>
+          </ul>
+        </div>
+        <div class="col-6 flex center-horizontal center-vertical">
+          <div class="iphone2 launchaco-builder-hoverable">
+            <div class="mask"><img src="./ae663e7c-1d75-45d3-b47c-4f9356303a69.gif" alt="Screenshot of iPhone App" class="mask-img"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="feature-2" class="section gray-accent" sitemeta="[object Object]" activepage="Landing">
+      <div class="container-lrg flex">
+        <div class="col-4 text-center flex flex-column center-horizontal"><i class="icon mobile-center-icon secondary-bg launchaco-builder-hoverable"><svg class="svg-fill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
+              <path d="M16.854 19.146a.5.5 0 0 1 0 .707l-4 4a.5.5 0 0 1-.707 0l-4-4a.5.5 0 0 1 .706-.707L12 22.293V10.5a.5.5 0 0 1 1 0v11.793l3.147-3.147a.5.5 0 0 1 .707 0zM19.928 6.08A7.34 7.34 0 0 0 12.5 0a7.34 7.34 0 0 0-7.428 6.08A5.996 5.996 0 0 0 6 18h1.5a.5.5 0 0 0 0-1H6a4.996 4.996 0 0 1-.774-9.933l.733-.114.104-.734A6.356 6.356 0 0 1 12.5 1a6.356 6.356 0 0 1 6.438 5.219l.103.734.733.114A4.996 4.996 0 0 1 19 17h-1.5a.5.5 0 0 0 0 1H19a5.996 5.996 0 0 0 .928-11.92z"></path>
+            </svg></i>
+          <h3 class="bold primary-color launchaco-builder-hoverable">Locally Hosted</h3>
+          <p class="paragraph secondary-color launchaco-builder-hoverable">Never worry about third party services disrupting your release schedule.</p>
+        </div>
+        <div class="col-4 text-center flex flex-column center-horizontal"><i class="icon mobile-center-icon secondary-bg launchaco-builder-hoverable"><svg class="svg-fill" viewBox="0 0 22 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 5a5 5 0 1 1 10 0A5 5 0 0 1 3 5zm5 6a8 8 0 0 0-8 8v.5a.5.5 0 0 0 .5.5h15a.5.5 0 0 0 .5-.5V19a8 8 0 0 0-8-8zm9-3a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-1.522 6H22a4.99 4.99 0 0 0-9.24-2.624A9.06 9.06 0 0 1 15.479 14z"></path>
+            </svg></i>
+          <h3 class="bold primary-color launchaco-builder-hoverable">Public URLs</h3>
+          <p class="paragraph secondary-color launchaco-builder-hoverable">Accessible by your entire team through localhost tunneling.</p>
+        </div>
+        <div class="col-4 text-center flex flex-column center-horizontal"><i class="icon mobile-center-icon secondary-bg launchaco-builder-hoverable"><svg class="svg-fill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25">
+              <path d="M20 22.494v1a.5.5 0 0 1-1 0v-1a.5.5 0 1 1 1 0zm-14.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 1 0v-1a.5.5 0 0 0-.5-.5zm7 1a10.924 10.924 0 0 1-2.494-.391l-.27 1.76a.528.528 0 0 0 .097.454.498.498 0 0 0 .387.183h4.56a.5.5 0 0 0 .49-.598l-.275-1.8a10.928 10.928 0 0 1-2.495.392zm9.06-7.44L18 11.995v9h2.5a1.5 1.5 0 0 0 1.5-1.5v-2.879a1.5 1.5 0 0 0-.44-1.06zM17 5.995v15a18.472 18.472 0 0 1-4 .974v-7.474a.5.5 0 0 0-1 0v7.474a18.47 18.47 0 0 1-4-.974v-15C8 3.67 11.553.244 12.5 0c.947.244 4.5 3.67 4.5 5.994zm-2.168 1.127A4.374 4.374 0 0 0 12.5 5.994a4.113 4.113 0 0 0-2.343 1.136.5.5 0 0 0 .686.729 3.213 3.213 0 0 1 1.657-.865 3.417 3.417 0 0 1 1.668.874.5.5 0 0 0 .664-.748zM3 16.614v2.88a1.5 1.5 0 0 0 1.5 1.5H7v-9l-3.56 3.56a1.5 1.5 0 0 0-.44 1.06z"></path>
+            </svg></i>
+          <h3 class="bold primary-color launchaco-builder-hoverable">iOS &amp; Android Support</h3>
+          <p class="paragraph secondary-color launchaco-builder-hoverable">Cross platform support makes it a great choice for all teams.</p>
+        </div>
+      </div>
+      <!---->
+    </section>
+    <footer id="footer-3" class="section text-center gray-white" sitemeta="[object Object]" activepage="Landing" style="padding: 25px">
+      <div class="container col-12">
+        <!---->
+        <div><span class="span">©</span> <span class="span">Developed by @biocross and designed by @madebytushar</span></div>
+        <div>
+          <br>
+          <span class="span secondary-color">
+            Website built using <a target="_blank" href="https://www.launchaco.com">LaunchACo</a>
+          </span>
+        </div>
+      </div>
+    </footer>
+
+
+</body><loom-container id="lo-engage-ext-container"><loom-shadow classname="resolved"></loom-shadow></loom-container></html>
