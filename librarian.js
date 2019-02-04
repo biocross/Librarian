@@ -283,11 +283,15 @@ program
 
 program
   .command('update')
-  .alias('s')
   .description('Update Librarian to be the latest and greatest!')
   .action(async () => {
     printHeader('Updating Librarian...');
     await preferences.init(storageOptions);
+
+    if (!await isSetup(preferences)) {
+      fatalError('Librarian has not been setup yet! Run ' + chalk.yellow('librarian setup') + ' to begin')
+    }
+    
     const configuration = await preferences.getItem(configurationKey);
 
     const localPath = `${configuration.working_directory}web`;
@@ -298,7 +302,7 @@ program
       if (configuration.assets_web) {
         await updateServer(assetServerPath);
       }
-      
+
       await setWebConfiguration(preferences, noUpdateConfiguration);
 
       log(chalk.bold("Update Complete!"));
