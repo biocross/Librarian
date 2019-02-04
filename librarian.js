@@ -26,6 +26,12 @@ const storageOptions = {
   forgiveParseErrors: true
 };
 const JEYLL_FRONT_MATTER_CHARACTER = "---\n---\n\n";
+const noUpdateConfiguration = {
+  "update": {
+    "available": false,
+    "notes": ""
+  }
+};
 
 program
   .version(pkg.version)
@@ -292,6 +298,9 @@ program
       if (configuration.assets_web) {
         await updateServer(assetServerPath);
       }
+      
+      await setWebConfiguration(preferences, noUpdateConfiguration);
+
       log(chalk.bold("Update Complete!"));
       log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
     } catch (error) {
@@ -363,13 +372,7 @@ const checkForUpdate = async (preferences) => {
     }
     await setWebConfiguration(preferences, configuration);
   } else {
-    const configuration = {
-      "update": {
-        "available": false,
-        "notes": ""
-      }
-    }
-    await setWebConfiguration(preferences, configuration);
+    await setWebConfiguration(preferences, noUpdateConfiguration);
   }
 }
 
