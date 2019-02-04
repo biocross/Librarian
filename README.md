@@ -4,28 +4,29 @@
 </div>
 
 
-> Librarian is an easy way to host your iOS & Android builds locally, and provide instant installs onsite.
+> Librarian is an easy way to serve your iOS & Android builds on your local network, and make dogfeeding and testing development versions of your app effortless.
  
 [![NPM Version](http://img.shields.io/npm/v/librarian-server.svg?style=flat)](https://www.npmjs.org/package/librarian-server)
 
+<img width="250" src="https://j.gifs.com/p8wOZy.gif" alt="Librarian on iOS"><br/><br/>
 
 ## Highlights
 
-- [x] Support for iOS & Android Builds
+- [x] Support for iOS `IPA` & Android `APK`
 - [x] Simple & Quick Setup
-- [x] Clean Web Interface served over HTTPS
+- [x] Clean Web Interface
 - [x] Easily add builds
-- [x] Ability to have Public URLs for builds
-- [x] Almost instant app installs on the local network
-- [x] No more dependence on `Fabric` / `Testflight`
+- [x] Ability to have Internet accessible Public URLs for builds
+- [x] Instant app installs on the local network, your testers don't have to wait!
+- [x] No more dependency on `Crashlytics Beta` / `Testflight`
 
 ## Install
 
 ```console
-$ sudo npm i -g librarian-server
+$ [sudo] npm i -g librarian-server
 $ librarian setup
 ```
-> If you can get an `EACCESS` / Permissions error while while running `npm i -g librarian-server`, just run `sudo npm link librarian-server`, before running `librarian setup`. 
+If you can get an `EACCESS / Permissions` error while while running `npm i -g librarian-server`, just run `sudo npm link librarian-server`, before running `librarian setup`.
 
 The setup will ask you a few questions to configure Librarian on your system. You can just press return throughout the process to choose the default values.
 
@@ -40,7 +41,7 @@ $ librarian start
 ```
 This will start the web interface, and will print the URL to it on the console, along with a QR code to the URL for quick access 😁
 
-> Librarian uses [ngrok](https://ngrok.com/product) tunneling to serve your localhost over the Internet using a secure `HTTPS` tunnel.
+> Librarian uses [ngrok](https://ngrok.com/product) tunneling to serve your localhost over the Internet using a secure `HTTPS` tunnel. Also, `HTTPS` is mandatory for iOS Builds to work.
 
 ### Submitting Builds
 
