@@ -4,7 +4,7 @@
 </div>
 
 
-> Librarian is an easy way to serve your iOS & Android builds on your local network, and make dogfooding and testing development versions of your app effortless.
+> Librarian is an easy way to serve your iOS & Android builds on your local network, and make testing internal versions of your app effortless.
  
 [![NPM Version](http://img.shields.io/npm/v/librarian-server.svg?style=flat)](https://www.npmjs.org/package/librarian-server)
 
@@ -23,12 +23,12 @@
 ## Install
 
 ```console
-$ [sudo] npm i -g librarian-server
+$ sudo npm i -g librarian-server
 $ librarian setup
+$ sudo npm link librarian-server # If you can get an `EACCESS / Permissions` error
 ```
-If you can get an `EACCESS / Permissions` error while while running `npm i -g librarian-server`, just run `sudo npm link librarian-server`, before running `librarian setup`.
 
-The setup will ask you a few questions to configure Librarian on your system. You can just press return throughout the process to choose the default values.
+The setup will ask you a few questions to configure Librarian on your system. You can just press enter throughout the process to choose the default values.
 
 ## Usage
 
