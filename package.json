@@ -35,14 +35,14 @@
     "app-metadata": "^0.1.26",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
-    "fs-extra": "7.0.1",
+    "fs-extra": "8.0.1",
     "inquirer": "^6.3.1",
     "js-yaml": "^3.13.1",
     "ngrok": "^3.1.1",
     "node-persist": "^3.0.4",
     "plist": "^3.0.1",
     "qrcode-terminal": "^0.12.0",
-    "simple-git": "^1.110.0",
-    "update-notifier": "^2.5.0"
+    "simple-git": "^1.113.0",
+    "update-notifier": "^3.0.0"
   }
 }
