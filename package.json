@@ -34,15 +34,16 @@
   "dependencies": {
     "app-metadata": "^0.1.26",
     "chalk": "^2.4.2",
-    "commander": "^2.20.0",
-    "fs-extra": "8.0.1",
-    "inquirer": "^6.3.1",
+    "commander": "^3.0.0",
+    "fs-extra": "8.1.0",
+    "inquirer": "^6.5.0",
     "js-yaml": "^3.13.1",
-    "ngrok": "^3.1.1",
-    "node-persist": "^3.0.4",
+    "ngrok": "^3.2.4",
+    "node-persist": "^3.0.5",
     "plist": "^3.0.1",
     "qrcode-terminal": "^0.12.0",
-    "simple-git": "^1.113.0",
-    "update-notifier": "^3.0.0"
+    "simple-git": "^1.124.0",
+    "update-notifier": "^3.0.1",
+    "lodash": "4.17.15"
   }
 }
