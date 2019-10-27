@@ -7,6 +7,7 @@ const fs = require('fs-extra');
 const git = require('simple-git/promise');
 const home = os.homedir();
 const { spawn } = require('child_process');
+const { sendEvent, LibrarianEvents } = require('./analytics.js');
 
 const configurationKey = 'librarian_config';
 const librarianWebRepo = 'https://github.com/biocross/Librarian-Web.git';
@@ -85,6 +86,7 @@ const setupQuestions = [
 ];
 
 const beginSetup = async (preferences) => {
+  sendEvent(LibrarianEvents.SetupStarted);
   const configuration = await prompt(setupQuestions);
 
   if (configuration.local_ip.indexOf('http') == -1) {
@@ -126,10 +128,12 @@ const beginSetup = async (preferences) => {
             log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
           }
           if (String(data).toLowerCase().indexOf('error') > -1) {
+            sendEvent(LibrarianEvents.SetupError);
             log(String(data));
           }
         });
       } else {
+        sendEvent(LibrarianEvents.SetupComplete);
         log(chalk.green('Installation Complete!'));
         log(chalk.bold('\nAll set! Run Librarian using: ') + chalk.yellow.bold('librarian start'));
       }
@@ -140,6 +144,7 @@ const beginSetup = async (preferences) => {
   });
 
   bundler.on('exit', function (code, signal) {
+    if(code != 0) { sendEvent(LibrarianEvents.SetupError); }
     if (code == 127) {
       fatalError('Librarian requires bundler to work. Please install bundler by running ' + chalk.bold.yellow('gem install bundler') + ' and run librarian setup again.')
     }

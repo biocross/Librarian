@@ -16,6 +16,7 @@ const gitP = require('simple-git/promise');
 const git = gitP();
 const { Extract } = require('app-metadata');
 const { spawn } = require('child_process');
+const { sendEvent, LibrarianEvents } = require('./analytics.js');
 const { beginSetup, isSetup, shouldOverwriteConfiguration, purgeExistingInstallation, configurationKey } = require('./setup.js');
 const { setWebConfiguration, addBuild } = require('./webBridge.js');
 const storageOptions = {
@@ -69,6 +70,8 @@ program
       fatalError('Librarian has not been setup yet! Run ' + chalk.yellow('librarian setup') + ' to begin')
     }
 
+    sendEvent(LibrarianEvents.ServerStarted);
+
     printHeader('Starting Librarian...');
 
     const prefs = await preferences.getItem(configurationKey);
@@ -92,6 +95,8 @@ program
     });
 
     web.on('exit', function (code, signal) {
+      if(code != 0) { sendEvent(LibrarianEvents.ServerError); }
+      if(code == 1) { fatalError("Do you have another instance of Librarian running?") }
       fatalError('The Jekyll Server has quit unexpectedly. Librarian is now exiting.');
     });
 
@@ -115,6 +120,8 @@ program
       });
 
       asset_server.on('exit', function (code, signal) {
+        if(code == 1) { fatalError("Do you have another instance of Librarian running?") }
+        if(code != 0) { sendEvent(LibrarianEvents.ServerError); }
         fatalError('The Assets Server has quit unexpectedly. Librarian is now exiting.');
       });
     }
@@ -137,6 +144,7 @@ program
       tunnelURL = await ngrok.connect(options);
 
     } catch (error) {
+      sendEvent(LibrarianEvents.ServerError);
       log(JSON.stringify(error));
       fatalError("\nFailed to start the ngrok tunnel.\nPlease make sure your ngRok token is valid.");
     }
@@ -180,6 +188,8 @@ program
   .option('-p, --public', 'Allow the build to be downloaded via the Internet using Librarian\'s HTTPS Tunnel')
   .description('Submit a build to librarian')
   .action(async (pathToFile, options) => {
+    
+    sendEvent(LibrarianEvents.BuildSubmitted);
 
     await preferences.init(storageOptions);
 
