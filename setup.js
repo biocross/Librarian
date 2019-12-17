@@ -143,7 +143,7 @@ const beginSetup = async (preferences) => {
     }
   });
 
-  bundler.stdout.on('data', (data) => {
+  bundler.stderr.on('data', (data) => {
     log(chalk.red('Error:'));
     log(String(data));
   });
