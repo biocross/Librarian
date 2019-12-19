@@ -143,11 +143,6 @@ const beginSetup = async (preferences) => {
     }
   });
 
-  bundler.stderr.on('data', (data) => {
-    log(chalk.red('Error:'));
-    log(String(data));
-  });
-            
   bundler.on('exit', function (code, signal) {
     if(code != 0) { sendEvent(LibrarianEvents.SetupError); }
     if (code == 127) {
