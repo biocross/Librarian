@@ -94,6 +94,11 @@ program
       }
     });
 
+    web.stderr.on('data', (data) => {
+      log('Error:');
+      log(String(data));
+    });
+  
     web.on('exit', function (code, signal) {
       if(code != 0) { sendEvent(LibrarianEvents.ServerError); }
       if(code == 1) { fatalError("Do you have another instance of Librarian running?") }
@@ -117,6 +122,11 @@ program
         if (String(data).toLowerCase().indexOf('error') > -1) {
           log(String(data));
         }
+      });
+
+      asset_server.stderr.on('data', (data) => {
+        log('Error:');
+        log(String(data));
       });
 
       asset_server.on('exit', function (code, signal) {
