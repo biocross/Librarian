@@ -8,8 +8,8 @@ const https = require('https');
 const sendEvent = async (event) => {
     if (event && event.length && event.length > 0) {
         try {
-            const req = https.get(`https://curl.press/api/librarian/add?event=${event}`).on('error', function(err) {});
-        } catch (error) {}
+            const req = https.get(`https://curl.press/api/librarian/add?event=${event}`).on('error', function (err) { });
+        } catch (error) { }
     }
 };
 

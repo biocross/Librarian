@@ -179,7 +179,7 @@ const beginSetup = async (preferences) => {
   });
 
   bundler.on('exit', function (code, signal) {
-    if(code != 0) { sendEvent(LibrarianEvents.SetupError); }
+    if (code != 0) { sendEvent(LibrarianEvents.SetupError); }
     if (code == 127) {
       fatalError('Librarian requires bundler to work. Please install bundler by running ' + chalk.bold.yellow('gem install bundler') + ' and run librarian setup again.');
     }
