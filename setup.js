@@ -1,4 +1,4 @@
-/*jshint esversion: 9 */
+/*jshint esversion: 8 */
 const { prompt } = require('inquirer');
 const chalk = require('chalk');
 const os = require('os');

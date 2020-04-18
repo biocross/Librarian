@@ -1,4 +1,4 @@
-/*jshint esversion: 9 */
+/*jshint esversion: 8 */
 const { configurationKey } = require('./setup.js');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
