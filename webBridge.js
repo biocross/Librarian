@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 const { configurationKey } = require('./setup.js');
 const fs = require('fs-extra');
 const yaml = require('js-yaml');
@@ -20,7 +20,7 @@ const setWebConfiguration = async (preferences, configuration) => {
     } catch (error) {
         console.log(error);
     }
-}
+};
 
 const addBuild = async (preferences, build) => {
     try {
@@ -37,6 +37,6 @@ const addBuild = async (preferences, build) => {
     } catch (error) {
         console.log(error);
     }
-}
+};
 
 module.exports = { setWebConfiguration, addBuild };

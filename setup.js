@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/*jshint esversion: 8 */
 const { prompt } = require('inquirer');
 const chalk = require('chalk');
 const os = require('os');
@@ -32,7 +32,7 @@ const setupQuestions = [
     type: 'input',
     name: 'local_ip',
     message: 'What is the local IP Librarian Website should be running at? (Enter for autodetected default)',
-    default: os.networkInterfaces().en0.find(elm => elm.family == 'IPv4').address
+    default: os.networkInterfaces().en0.find(elm => elm.family === 'IPv4').address
   },
   {
     type: 'confirm',
@@ -82,14 +82,49 @@ const setupQuestions = [
     name: 'web_password',
     message: 'Please enter the password for the web interface:',
     when: (answers) => { return answers.existing_token === true && answers.private_web === true; }
-  }
+  },
+  {
+    type: 'confirm',
+    name: 'enable_s3',
+    message: 'Do you want to enable s3 storage?',
+    default: false,
+  },
+  {
+    type: 'input',
+    name: 's3_region',
+    message: 'S3 REGION:',
+    default: '',
+    when: (answers) => { return answers.enable_s3 === true; }
+  },
+  {
+    type: 'input',
+    name: 's3_key',
+    message: 'S3 SECRET ID:',
+    default: '',
+    when: (answers) => { return answers.enable_s3 === true; }
+  },
+  {
+    type: 'input',
+    name: 's3_secret',
+    message: 'S3 SECRET KEY:',
+    default: '',
+    when: (answers) => { return answers.enable_s3 === true; }
+  },
+  {
+    type: 'input',
+    name: 's3_bucket',
+    message: 'S3 BUCKET:',
+    default: '',
+    when: (answers) => { return answers.enable_s3 === true; }
+  },
+
 ];
 
 const beginSetup = async (preferences) => {
   sendEvent(LibrarianEvents.SetupStarted);
   const configuration = await prompt(setupQuestions);
 
-  if (configuration.local_ip.indexOf('http') == -1) {
+  if (configuration.local_ip.indexOf('http') === -1) {
     configuration.local_ip = 'http://' + configuration.local_ip + ':' + configuration.jekyll_port;
     configuration.assets_web = !configuration.assets_web;
   }
@@ -146,20 +181,20 @@ const beginSetup = async (preferences) => {
   bundler.on('exit', function (code, signal) {
     if(code != 0) { sendEvent(LibrarianEvents.SetupError); }
     if (code == 127) {
-      fatalError('Librarian requires bundler to work. Please install bundler by running ' + chalk.bold.yellow('gem install bundler') + ' and run librarian setup again.')
+      fatalError('Librarian requires bundler to work. Please install bundler by running ' + chalk.bold.yellow('gem install bundler') + ' and run librarian setup again.');
     }
   });
 
   await preferences.setItem(configurationKey, configuration);
-}
+};
 
 const purgeExistingInstallation = async (preferences) => {
   const prefs = await preferences.getItem(configurationKey);
   console.log("Purging the Existing Installation at: " + prefs.working_directory);
   await fs.emptyDir(prefs.working_directory);
-  await fs.removeSync(prefs.working_directory)
+  await fs.removeSync(prefs.working_directory);
   console.log("Purge Complete!\n");
-}
+};
 
 const isSetup = async (preferences) => {
   const isSetup = await preferences.getItem(configurationKey);
