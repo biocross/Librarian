@@ -44,7 +44,7 @@
     "node-persist": "^3.0.5",
     "plist": "^3.0.1",
     "qrcode-terminal": "^0.12.0",
-    "simple-git": "^1.126.0",
+    "simple-git": "^3.3.0",
     "update-notifier": "^3.0.1"
   }
 }
